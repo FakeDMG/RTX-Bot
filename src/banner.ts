@@ -3,8 +3,12 @@ import {readFileSync} from 'fs';
 
 const version = readFileSync('version.txt', 'utf8');
 
-export const banner = {
-	asciiVersion: `
+export function printBanner(ascii?: boolean, hexColor?: string) {
+	let banner = chalk.bold(`ＳＴＲＥＥＴＭＥＲＣＨＡＮＴ
+${version}`);
+
+	if (ascii) {
+		banner = chalk.hex(hexColor ?? '#808080').bold(`
   ██████ ▄▄▄█████▓ ██▀███  ▓█████ ▓█████▄▄▄█████▓ ███▄ ▄███▓▓█████  ██▀███   ▄████▄   ██░ ██  ▄▄▄       ███▄    █ ▄▄▄█████▓
 ▒██    ▒ ▓  ██▒ ▓▒▓██ ▒ ██▒▓█   ▀ ▓█   ▀▓  ██▒ ▓▒▓██▒▀█▀ ██▒▓█   ▀ ▓██ ▒ ██▒▒██▀ ▀█  ▓██░ ██▒▒████▄     ██ ▀█   █ ▓  ██▒ ▓▒
 ░ ▓██▄   ▒ ▓██░ ▒░▓██ ░▄█ ▒▒███   ▒███  ▒ ▓██░ ▒░▓██    ▓██░▒███   ▓██ ░▄█ ▒▒▓█    ▄ ▒██▀▀██░▒██  ▀█▄  ▓██  ▀█ ██▒▒ ▓██░ ▒░
@@ -14,12 +18,8 @@ export const banner = {
 ░ ░▒  ░ ░    ░      ░▒ ░ ▒░ ░ ░  ░ ░ ░  ░   ░    ░  ░      ░ ░ ░  ░  ░▒ ░ ▒░  ░  ▒    ▒ ░▒░ ░  ▒   ▒▒ ░░ ░░   ░ ▒░    ░
 ░  ░  ░    ░        ░░   ░    ░      ░    ░      ░      ░      ░     ░░   ░ ░         ░  ░░ ░  ░   ▒      ░   ░ ░   ░
 	  ░              ░        ░  ░   ░  ░               ░      ░  ░   ░     ░ ░       ░  ░  ░      ░  ░         ░
-${version}`,
-	render(ascii: boolean, hexColor: string) {
-		return chalk
-			.hex(hexColor)
-			.bold(ascii ? this.asciiVersion : this.stringVersion);
-	},
-	stringVersion: `ＳＴＲＥＥＴＭＥＲＣＨＡＮＴ
-${version}`
-};
+${version}`);
+	}
+
+	console.log(banner);
+}

@@ -51,7 +51,8 @@
     "twitch-auth": "^4.3.1",
     "twitch-chat-client": "^4.3.2",
     "twitter": "^1.7.1",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "yaml": "^1.10.0"
   },
   "devDependencies": {
     "@types/async": "^3.2.4",

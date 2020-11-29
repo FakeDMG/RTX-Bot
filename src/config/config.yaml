@@ -1,0 +1,98 @@
+ascii:
+  banner:
+  color:
+browser:
+  headless:
+  lowBandwidth:
+  incognito:
+  open:
+  page:
+    backoff:
+      min:
+      max:
+    sleep:
+      min:
+      max:
+    timeout:
+  screenshot:
+  trusted:
+  userAgent:
+docker:
+notification:
+  desktop:
+  discord:
+    - hook: http://test.com
+      roles:
+        - 'test1'
+        - 'test2'
+  email:
+    password:
+    smtp:
+      address:
+      port:
+    to:
+    username:
+  mqtt:
+    address:
+    clientId:
+    password:
+    port:
+    qos:
+    topic:
+    username:
+  pagerduty:
+    routingKey:
+    severity:
+  philipsHue:
+    apiKey:
+    cloud:
+      accessToken:
+      clientId:
+      clientSecret:
+      refreshToken:
+    lan:
+      address:
+    light:
+      color:
+      ids:
+      pattern:
+  phone:
+    - carrier: 'visible'
+      number : '123456789'
+  pushbullet:
+    apiKey:
+  pushover:
+    token:
+    user:
+    priority:
+  slack:
+    - channel:
+      token:
+  sound:
+  telegram:
+    - accessToken:
+      chatId:
+  twilio:
+    accountSid:
+    authToken:
+    fromNumber:
+    toNumber:
+  twitch:
+    accessToken:
+    channel:
+    clientId:
+    clientSecret:
+    refreshToken:
+  twitter:
+    accessTokenKey:
+    accessTokenSecret:
+    consumerKey:
+    consumerSecret:
+    tags:
+      - ''
+      - ''
+logLevel:
+proxy:
+  address:
+  protocol:
+  port:

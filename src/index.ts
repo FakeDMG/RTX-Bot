@@ -1,4 +1,3 @@
-import {startAPIServer, stopAPIServer} from './web';
 import {Browser} from 'puppeteer';
 import {adBlocker} from './adblocker';
 import {config} from './config';
@@ -67,13 +66,9 @@ async function main() {
 
 		setTimeout(tryLookupAndLoop, getSleepTime(store), browser, store);
 	}
-
-	await startAPIServer();
 }
 
 async function stop() {
-	await stopAPIServer();
-
 	if (browser) {
 		// Use temporary swap variable to avoid any race condition
 		const browserTemporary = browser;

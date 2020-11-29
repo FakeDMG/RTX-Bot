@@ -1,16 +1,174 @@
-import {banner} from './banner';
-
 import {config as config_} from 'dotenv';
+import fs from 'fs';
 import path from 'path';
+import {printBanner} from '../banner';
+import yaml from 'yaml';
 
-config_({path: path.resolve(__dirname, '../.env')});
+interface IDiscord {
+	hook: string;
+	roles: string[];
+}
 
-console.info(
-	banner.render(
-		envOrBoolean(process.env.ASCII_BANNER, false),
-		envOrString(process.env.BANNER_COLOR, '#808080')
-	)
-);
+interface IPhone {
+	carrier: string;
+	number: string;
+}
+
+interface ISlack {
+	channel: string;
+	token: string;
+}
+
+interface ITelegram {
+	chatId: string;
+	token: string;
+}
+
+interface IConfig {
+	ascii?: {
+		banner: boolean;
+		color: string;
+	};
+	browser?: {
+		headless?: boolean;
+		lowBandwidth?: boolean;
+		incognito?: boolean;
+		open?: boolean;
+		page?: {
+			backoff?: {
+				min: number;
+				max: number;
+			};
+			height?: number;
+			sleep?: {
+				min: number;
+				max: number;
+			};
+			timeout?: number;
+			width?: number;
+		};
+		screenshot?: boolean;
+		trusted?: boolean;
+		userAgent?: string[];
+	};
+	docker?: boolean;
+	notification?: {
+		desktop?: boolean;
+		discord?: IDiscord[];
+		email?: {
+			password?: string;
+			smtp?: {
+				address: string;
+				port: number;
+			};
+			to?: string;
+			username?: string;
+		};
+		mqtt?: {
+			address: string;
+			clientId: string;
+			password: string;
+			port: number;
+			qos: number;
+			topic: string;
+			username: string;
+		};
+		pagerduty?: {
+			routingKey: string;
+			severity: string;
+		};
+		philipsHue?: {
+			apiKey?: string;
+			cloud?: {
+				accessToken: string;
+				clientId: string;
+				clientSecret: string;
+				refreshToken: string;
+			};
+			lan?: {
+				address: string;
+			};
+			light?: {
+				color: string;
+				ids: string[];
+				pattern: string;
+			};
+		};
+		phone?: IPhone[];
+		pushbullet?: {
+			apiKey: string;
+		};
+		pushover?: {
+			token: string;
+			username: string;
+			priority: number;
+		};
+		slack?: ISlack[];
+		sound?: string;
+		telegram?: ITelegram[];
+		twilio?: {
+			accountId: string;
+			token: string;
+			from: string;
+			to: string;
+		};
+		twitch?: {
+			channel: string;
+			clientId: string;
+			clientSecret: string;
+			refreshToken: string;
+			token: string;
+		};
+		twitter?: {
+			accessKey: string;
+			accessSecret: string;
+			consumerKey: string;
+			consumerSecret: string;
+			tags: string[];
+		};
+	};
+	logLevel?: string;
+	proxy?: {
+		address: string;
+		protocol: string;
+		port: number;
+	};
+}
+
+const ConfigsDefault: IConfig = {
+	browser: {
+		headless: true,
+		open: true,
+		page: {
+			backoff: {
+				max: 3600000,
+				min: 0
+			},
+			height: 1080,
+			sleep: {
+				max: 10000,
+				min: 5000
+			},
+			width: 1920
+		},
+		screenshot: true
+	},
+	logLevel: 'info'
+};
+
+function getConfig(): IConfig {
+	const file = fs.readFileSync('src/config/config.yaml', 'utf8');
+	return {
+		...ConfigsDefault,
+		...yaml.parse(file, {sortMapEntries: true})
+	};
+}
+
+export const configs = getConfig();
+
+printBanner(configs.ascii?.banner, configs.ascii?.color);
+
+config_({path: path.resolve(__dirname, '../../.env')});
 
 /**
  * Returns environment variable, given array, or default array.
