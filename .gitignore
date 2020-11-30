@@ -4,11 +4,8 @@
 build/
 node_modules/
 src/config/*.yaml
-!src/config/config.yaml
 
 .env*
-.*env
-!.env-example
 success-*.png
 
 *.wav

@@ -1,15 +1,15 @@
 import {Link, Store} from '../store/model';
 import {Print, logger} from '../logger';
 import PushBullet from '@jef/pushbullet';
-import {config} from '../config';
+import {configs} from '../config';
 
-const pushbullet = config.notifications.pushbullet;
+const pushbullet = configs.notification?.pushbullet;
 
 export function sendPushbulletNotification(link: Link, store: Store) {
 	if (pushbullet) {
 		logger.debug('↗ sending pushbullet message');
 
-		const pusher = new PushBullet(pushbullet);
+		const pusher = new PushBullet(pushbullet.apiKey);
 
 		pusher.note(
 			{},

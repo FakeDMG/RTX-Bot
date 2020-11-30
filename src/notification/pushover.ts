@@ -1,16 +1,12 @@
 import {Link, Store} from '../store/model';
 import {Print, logger} from '../logger';
 import Push, {PushoverMessage} from 'pushover-notifications';
-import {config} from '../config';
+import {configs} from '../config';
 
-const pushover = config.notifications.pushover;
-const push = new Push({
-	token: pushover.token,
-	user: pushover.username
-});
+const pushover = configs.notification?.pushover;
 
 export function sendPushoverNotification(link: Link, store: Store) {
-	if (pushover.token && pushover.username) {
+	if (pushover) {
 		logger.debug('↗ sending pushover message');
 
 		const message: PushoverMessage = {
@@ -19,7 +15,10 @@ export function sendPushoverNotification(link: Link, store: Store) {
 			title: Print.inStock(link, store)
 		};
 
-		push.send(message, (error: Error) => {
+		new Push({
+			token: pushover.token,
+			user: pushover.username
+		}).send(message, (error: Error) => {
 			if (error) {
 				logger.error("✖ couldn't send pushover message", error);
 			} else {

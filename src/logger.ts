@@ -1,6 +1,6 @@
 import {Link, Store} from './store/model';
 import chalk from 'chalk';
-import {config} from './config';
+import {configs} from './config';
 import winston from 'winston';
 
 const prettyJson = winston.format.printf((info) => {
@@ -23,7 +23,7 @@ export const logger = winston.createLogger({
 		winston.format.metadata({fillExcept: ['level', 'message', 'timestamp']}),
 		prettyJson
 	),
-	level: config.logLevel,
+	level: configs.logLevel,
 	transports: [new winston.transports.Console({})]
 });
 

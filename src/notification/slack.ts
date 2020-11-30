@@ -1,35 +1,45 @@
 import {Link, Store} from '../store/model';
 import {Print, logger} from '../logger';
 import {WebClient} from '@slack/web-api';
-import {config} from '../config';
+import {configs} from '../config';
 
-const slack = config.notifications.slack;
-const channel = slack.channel;
-const token = slack.token;
-const web = new WebClient(token);
+const slack = configs.notification?.slack;
 
 export function sendSlackMessage(link: Link, store: Store) {
-	if (slack.channel && slack.token) {
+	if (slack) {
 		logger.debug('↗ sending slack message');
 
-		(async () => {
-			const givenUrl = link.cartUrl ? link.cartUrl : link.url;
+		for (const entry of slack) {
+			const web = new WebClient(entry.token);
 
-			try {
-				const result = await web.chat.postMessage({
-					channel,
-					text: `${Print.inStock(link, store)}\n${givenUrl}`
-				});
+			(async () => {
+				const givenUrl = link.cartUrl ? link.cartUrl : link.url;
 
-				if (!result.ok) {
-					logger.error("✖ couldn't send slack message", result);
-					return;
+				try {
+					const promises = [];
+
+					for (const channel of entry.channels) {
+						promises.push(
+							web.chat.postMessage({
+								channel,
+								text: `${Print.inStock(link, store)}\n${givenUrl}`
+							})
+						);
+					}
+
+					const results = await Promise.all(promises);
+
+					results.forEach((result) => {
+						if (result.ok) {
+							logger.info('✔ slack message sent');
+						} else {
+							logger.error("✖ couldn't send slack message", result);
+						}
+					});
+				} catch (error: unknown) {
+					logger.error("✖ couldn't send slack message", error);
 				}
-
-				logger.info('✔ slack message sent');
-			} catch (error: unknown) {
-				logger.error("✖ couldn't send slack message", error);
-			}
-		})();
+			})();
+		}
 	}
 }

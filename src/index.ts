@@ -1,6 +1,6 @@
 import {Browser} from 'puppeteer';
 import {adBlocker} from './adblocker';
-import {config} from './config';
+import {configs} from './config';
 import {getSleepTime} from './util';
 import {logger} from './logger';
 import puppeteer from 'puppeteer-extra';
@@ -10,7 +10,7 @@ import {storeList} from './store/model';
 import {tryLookupAndLoop} from './store';
 
 puppeteer.use(stealthPlugin());
-if (config.browser.lowBandwidth) {
+if (configs.browser.lowBandwidth) {
 	puppeteer.use(
 		resourceBlock({
 			blockedTypes: new Set(['image', 'font'] as const)
@@ -30,20 +30,20 @@ async function main() {
 
 	// Skip Chromium Linux Sandbox
 	// https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#setting-up-chrome-linux-sandbox
-	if (config.browser.isTrusted) {
+	if (configs.browser.trusted) {
 		args.push('--no-sandbox');
 		args.push('--disable-setuid-sandbox');
 	}
 
 	// https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#tips
-	if (config.docker) {
+	if (configs.docker) {
 		args.push('--disable-dev-shm-usage');
 	}
 
 	// Add the address of the proxy server if defined
-	if (config.proxy.address) {
+	if (configs.proxy?.address) {
 		args.push(
-			`--proxy-server=${config.proxy.protocol}://${config.proxy.address}:${config.proxy.port}`
+			`--proxy-server=${configs.proxy.protocol}://${configs.proxy.address}:${configs.proxy.port}`
 		);
 	}
 
@@ -52,10 +52,10 @@ async function main() {
 	browser = await puppeteer.launch({
 		args,
 		defaultViewport: {
-			height: config.page.height,
-			width: config.page.width
+			height: configs.browser.page.height,
+			width: configs.browser.page.width
 		},
-		headless: config.browser.isHeadless
+		headless: configs.browser.headless
 	});
 
 	for (const store of storeList.values()) {

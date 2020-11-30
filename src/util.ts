@@ -1,8 +1,7 @@
-import {Browser, Page, Response} from 'puppeteer';
 import {StatusCodeRangeArray, Store} from './store/model';
-import {config} from './config';
+import {Page} from 'puppeteer';
+import {configs} from './config';
 import {disableBlockerInPage} from './adblocker';
-import {logger} from './logger';
 
 export function getSleepTime(store: Store) {
 	const minSleep = store.minPageSleep as number;
@@ -37,39 +36,8 @@ export function isStatusCodeInRange(
 	return false;
 }
 
-export async function usingResponse<T>(
-	browser: Browser,
-	url: string,
-	cb: (response: Response | null, page: Page, browser: Browser) => Promise<T>
-): Promise<T> {
-	return usingPage(browser, async (page, browser) => {
-		const response = await page.goto(url, {waitUntil: 'domcontentloaded'});
-
-		return cb(response, page, browser);
-	});
-}
-
-export async function usingPage<T>(
-	browser: Browser,
-	cb: (page: Page, browser: Browser) => Promise<T>
-): Promise<T> {
-	const page = await browser.newPage();
-	page.setDefaultNavigationTimeout(config.page.timeout);
-	await page.setUserAgent(getRandomUserAgent());
-
-	try {
-		return await cb(page, browser);
-	} finally {
-		try {
-			await closePage(page);
-		} catch (error: unknown) {
-			logger.error(error);
-		}
-	}
-}
-
 export async function closePage(page: Page) {
-	if (!config.browser.lowBandwidth) {
+	if (!configs.browser.lowBandwidth) {
 		await disableBlockerInPage(page);
 	}
 
@@ -77,7 +45,11 @@ export async function closePage(page: Page) {
 }
 
 export function getRandomUserAgent(): string {
-	return config.page.userAgents[
-		Math.floor(Math.random() * config.page.userAgents.length)
-	];
+	if (configs.browser.userAgents) {
+		return configs.browser.userAgents[
+			Math.floor(Math.random() * configs.browser.userAgents.length)
+		];
+	}
+
+	return '';
 }

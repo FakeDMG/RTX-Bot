@@ -1,5 +1,7 @@
 import {config as config_} from 'dotenv';
 import fs from 'fs';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import merge from 'lodash/merge';
 import path from 'path';
 import {printBanner} from '../banner';
 import yaml from 'yaml';
@@ -15,13 +17,33 @@ interface IPhone {
 }
 
 interface ISlack {
-	channel: string;
+	channels: string[];
 	token: string;
 }
 
-interface ITelegram {
-	chatId: string;
-	token: string;
+interface ISelector {
+	container: string;
+	text?: string;
+	euroFormat?: boolean;
+}
+
+interface ILink {
+	brand: string;
+	cartUrl?: string;
+	maxPrice: number;
+	model: string;
+	series: string;
+	url: string;
+}
+
+interface IStore {
+	backOffStatusCodes: number[];
+	labels: {
+		captcha: ISelector[];
+		inStock: ISelector[];
+		maxPrice: ISelector[];
+	};
+	links: ILink[];
 }
 
 interface IConfig {
@@ -29,29 +51,31 @@ interface IConfig {
 		banner: boolean;
 		color: string;
 	};
-	browser?: {
-		headless?: boolean;
+	browser: {
+		headless: boolean;
 		lowBandwidth?: boolean;
 		incognito?: boolean;
-		open?: boolean;
-		page?: {
-			backoff?: {
+		open: boolean;
+		page: {
+			backoff: {
 				min: number;
 				max: number;
 			};
-			height?: number;
-			sleep?: {
+			height: number;
+			inStockWaitTime?: number;
+			sleep: {
 				min: number;
 				max: number;
 			};
 			timeout?: number;
-			width?: number;
+			width: number;
 		};
-		screenshot?: boolean;
+		screenshot: boolean;
 		trusted?: boolean;
-		userAgent?: string[];
+		userAgents?: string[];
 	};
 	docker?: boolean;
+	stores?: IStore[];
 	notification?: {
 		desktop?: boolean;
 		discord?: IDiscord[];
@@ -61,8 +85,8 @@ interface IConfig {
 				address: string;
 				port: number;
 			};
-			to?: string;
-			username?: string;
+			to: string;
+			username: string;
 		};
 		mqtt?: {
 			address: string;
@@ -105,7 +129,10 @@ interface IConfig {
 		};
 		slack?: ISlack[];
 		sound?: string;
-		telegram?: ITelegram[];
+		telegram?: {
+			token: string;
+			chatIds: string[];
+		};
 		twilio?: {
 			accountId: string;
 			token: string;
@@ -117,17 +144,17 @@ interface IConfig {
 			clientId: string;
 			clientSecret: string;
 			refreshToken: string;
-			token: string;
+			accessToken: string;
 		};
 		twitter?: {
-			accessKey: string;
-			accessSecret: string;
+			accessTokenKey: string;
+			accessTokenSecret: string;
 			consumerKey: string;
 			consumerSecret: string;
-			tags: string[];
+			hashtags?: string[];
 		};
 	};
-	logLevel?: string;
+	logLevel: string;
 	proxy?: {
 		address: string;
 		protocol: string;
@@ -135,7 +162,7 @@ interface IConfig {
 	};
 }
 
-const ConfigsDefault: IConfig = {
+const defaultConfig: IConfig = {
 	browser: {
 		headless: true,
 		open: true,
@@ -156,15 +183,28 @@ const ConfigsDefault: IConfig = {
 	logLevel: 'info'
 };
 
-function getConfig(): IConfig {
-	const file = fs.readFileSync('src/config/config.yaml', 'utf8');
-	return {
-		...ConfigsDefault,
-		...yaml.parse(file, {sortMapEntries: true})
-	};
+function configFactory(): IConfig {
+	const files = fs.readdirSync('src/config/');
+
+	let config: IConfig = defaultConfig;
+
+	files.forEach(function (file) {
+		if (file.includes('yaml')) {
+			config = merge(
+				config,
+				yaml
+					.parseDocument(fs.readFileSync(`src/config/${file}`, 'utf8'), {
+						sortMapEntries: true
+					})
+					.toJSON()
+			);
+		}
+	});
+
+	return config;
 }
 
-export const configs = getConfig();
+export const configs = configFactory();
 
 printBanner(configs.ascii?.banner, configs.ascii?.color);
 
@@ -333,104 +373,6 @@ const docker = envOrBoolean(process.env.DOCKER);
 
 const logLevel = envOrString(process.env.LOG_LEVEL, 'info');
 
-const notifications = {
-	desktop: process.env.DESKTOP_NOTIFICATIONS === 'true',
-	discord: {
-		notifyGroup: envOrArray(process.env.DISCORD_NOTIFY_GROUP),
-		webHookUrl: envOrArray(process.env.DISCORD_WEB_HOOK)
-	},
-	email: {
-		password: envOrString(process.env.EMAIL_PASSWORD),
-		smtpAddress: envOrString(process.env.SMTP_ADDRESS),
-		smtpPort: envOrNumber(process.env.SMTP_PORT, 25),
-		to: envOrString(
-			process.env.EMAIL_TO,
-			envOrString(process.env.EMAIL_USERNAME)
-		),
-		username: envOrString(process.env.EMAIL_USERNAME)
-	},
-	mqtt: {
-		broker: envOrString(process.env.MQTT_BROKER_ADDRESS),
-		clientId: envOrString(process.env.MQTT_CLIENT_ID),
-		password: envOrString(process.env.MQTT_PASSWORD),
-		port: envOrNumber(process.env.MQTT_BROKER_PORT, 1883),
-		qos: envOrNumber(process.env.MQTT_QOS, 0),
-		topic: envOrString(process.env.MQTT_TOPIC, 'streetmerchant/alert'),
-		username: envOrString(process.env.MQTT_USERNAME)
-	},
-	pagerduty: {
-		integrationKey: envOrString(process.env.PAGERDUTY_INTEGRATION_KEY),
-		severity: envOrString(process.env.PAGERDUTY_SEVERITY, 'info')
-	},
-	philips_hue: {
-		accessToken: envOrString(process.env.PHILIPS_HUE_CLOUD_ACCESS_TOKEN),
-		apiKey: envOrString(process.env.PHILIPS_HUE_API_KEY),
-		bridgeIp: envOrString(process.env.PHILIPS_HUE_LAN_BRIDGE_IP),
-		clientId: envOrString(process.env.PHILIPS_HUE_CLOUD_CLIENT_ID),
-		clientSecret: envOrString(process.env.PHILIPS_HUE_CLOUD_CLIENT_SECRET),
-		lightColor: envOrString(process.env.PHILIPS_HUE_LIGHT_COLOR),
-		lightIds: envOrString(process.env.PHILIPS_HUE_LIGHT_IDS),
-		lightPattern: envOrString(process.env.PHILIPS_HUE_LIGHT_PATTERN),
-		refreshToken: envOrString(process.env.PHILIPS_HUE_CLOUD_REFRESH_TOKEN),
-		remoteApiUsername: envOrString(process.env.PHILIPS_HUE_API_KEY)
-	},
-	phone: {
-		availableCarriers: new Map([
-			['att', 'txt.att.net'],
-			['attgo', 'mms.att.net'],
-			['bell', 'txt.bell.ca'],
-			['fido', 'fido.ca'],
-			['google', 'msg.fi.google.com'],
-			['koodo', 'msg.koodomobile.com'],
-			['mint', 'mailmymobile.net'],
-			['rogers', 'pcs.rogers.com'],
-			['sprint', 'messaging.sprintpcs.com'],
-			['telus', 'msg.telus.com'],
-			['tmobile', 'tmomail.net'],
-			['verizon', 'vtext.com'],
-			['virgin', 'vmobl.com'],
-			['virgin-ca', 'vmobile.ca']
-		]),
-		carrier: envOrArray(process.env.PHONE_CARRIER),
-		number: envOrArray(process.env.PHONE_NUMBER)
-	},
-	playSound: envOrString(process.env.PLAY_SOUND),
-	pushbullet: envOrString(process.env.PUSHBULLET),
-	pushover: {
-		priority: envOrNumber(process.env.PUSHOVER_PRIORITY),
-		token: envOrString(process.env.PUSHOVER_TOKEN),
-		username: envOrString(process.env.PUSHOVER_USER)
-	},
-	slack: {
-		channel: envOrString(process.env.SLACK_CHANNEL),
-		token: envOrString(process.env.SLACK_TOKEN)
-	},
-	telegram: {
-		accessToken: envOrString(process.env.TELEGRAM_ACCESS_TOKEN),
-		chatId: envOrArray(process.env.TELEGRAM_CHAT_ID)
-	},
-	twilio: {
-		accountSid: envOrString(process.env.TWILIO_ACCOUNT_SID),
-		authToken: envOrString(process.env.TWILIO_AUTH_TOKEN),
-		from: envOrString(process.env.TWILIO_FROM_NUMBER),
-		to: envOrString(process.env.TWILIO_TO_NUMBER)
-	},
-	twitch: {
-		accessToken: envOrString(process.env.TWITCH_ACCESS_TOKEN),
-		channel: envOrString(process.env.TWITCH_CHANNEL),
-		clientId: envOrString(process.env.TWITCH_CLIENT_ID),
-		clientSecret: envOrString(process.env.TWITCH_CLIENT_SECRET),
-		refreshToken: envOrString(process.env.TWITCH_REFRESH_TOKEN)
-	},
-	twitter: {
-		accessTokenKey: envOrString(process.env.TWITTER_ACCESS_TOKEN_KEY),
-		accessTokenSecret: envOrString(process.env.TWITTER_ACCESS_TOKEN_SECRET),
-		consumerKey: envOrString(process.env.TWITTER_CONSUMER_KEY),
-		consumerSecret: envOrString(process.env.TWITTER_CONSUMER_SECRET),
-		tweetTags: envOrString(process.env.TWITTER_TWEET_TAGS)
-	}
-};
-
 const nvidia = {
 	addToCardAttempts: envOrNumber(process.env.NVIDIA_ADD_TO_CART_ATTEMPTS, 10),
 	sessionTtl: envOrNumber(process.env.NVIDIA_SESSION_TTL, 60000)
@@ -535,16 +477,8 @@ export const config = {
 	browser,
 	docker,
 	logLevel,
-	notifications,
 	nvidia,
 	page,
 	proxy,
 	store
 };
-
-export function setConfig(newConfig: any) {
-	const writeConfig = config as any;
-	for (const key of Object.keys(newConfig)) {
-		writeConfig[key] = newConfig[key];
-	}
-}

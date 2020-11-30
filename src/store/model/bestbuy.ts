@@ -8,8 +8,7 @@ export const BestBuy: Store = {
 		},
 		maxPrice: {
 			container:
-				'[data-sticky-media-gallery] .priceView-price .priceView-hero-price span',
-			euroFormat: false
+				'[data-sticky-media-gallery] .priceView-price .priceView-hero-price span'
 		}
 	},
 	links: [
@@ -18,7 +17,7 @@ export const BestBuy: Store = {
 			model: 'test:model',
 			series: 'test:series',
 			url:
-				'https://www.bestbuy.com/site/evga-ko-ultra-gaming-nvidia-geforce-rtx-2060-6gb-gddr6-pci-express-3-0-graphics-card-black-gray/6403801.p?skuId=6403801&intl=nosplash'
+				'https://www.bestbuy.com/site/xfx-amd-radeon-rx-580-gts-black-edition-8gb-gddr5-pci-express-3-0-graphics-card-black/6092641.p?skuId=6092641&intl=nosplash'
 		},
 		{
 			brand: 'nvidia',

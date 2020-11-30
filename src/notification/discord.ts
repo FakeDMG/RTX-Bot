@@ -1,14 +1,12 @@
 import {Link, Store} from '../store/model';
 import {MessageBuilder, Webhook} from 'discord-webhook-node';
-import {config} from '../config';
+import {configs} from '../config';
 import {logger} from '../logger';
 
-const discord = config.notifications.discord;
-const hooks = discord.webHookUrl;
-const notifyGroup = discord.notifyGroup;
+const discord = configs.notification?.discord;
 
 export function sendDiscordMessage(link: Link, store: Store) {
-	if (discord.webHookUrl.length > 0) {
+	if (discord) {
 		logger.debug('↗ sending discord message');
 
 		(async () => {
@@ -23,16 +21,13 @@ export function sendDiscordMessage(link: Link, store: Store) {
 				embed.addField('Series', link.series, true);
 				embed.addField('Model', link.model, true);
 
-				if (notifyGroup) {
-					embed.setText(notifyGroup.join(' '));
-				}
-
 				embed.setColor(0x76b900);
 				embed.setTimestamp();
 
 				const promises = [];
-				for (const hook of hooks) {
-					promises.push(new Webhook(hook).send(embed));
+				for (const entry of discord) {
+					embed.setText(entry.roles.join(' '));
+					promises.push(new Webhook(entry.hook).send(embed));
 				}
 
 				await Promise.all(promises);

@@ -1,32 +1,13 @@
 import {Link, Store} from '../store/model';
 import {Print, logger} from '../logger';
 import Mail from 'nodemailer/lib/mailer';
-import {config} from '../config';
-import nodemailer from 'nodemailer';
+import {configs} from '../config';
+import {createTransporter} from './util';
 
-const email = config.notifications.email;
-
-const transportOptions: any = {};
-
-if (email.username && (email.password || email.smtpAddress)) {
-	transportOptions.auth = {};
-	transportOptions.auth.user = email.username;
-	transportOptions.auth.pass = email.password;
-}
-
-if (email.smtpAddress) {
-	transportOptions.host = email.smtpAddress;
-	transportOptions.port = email.smtpPort;
-} else {
-	transportOptions.service = 'gmail';
-}
-
-export const transporter = nodemailer.createTransport({
-	...transportOptions
-});
+const email = configs.notification?.email;
 
 export function sendEmail(link: Link, store: Store) {
-	if (email.username && (email.password || email.smtpAddress)) {
+	if (email) {
 		logger.debug('↗ sending email');
 
 		const mailOptions: Mail.Options = {
@@ -43,6 +24,8 @@ export function sendEmail(link: Link, store: Store) {
 			text: Print.productInStock(link),
 			to: email.to
 		};
+
+		const transporter = createTransporter();
 
 		transporter.sendMail(mailOptions, (error) => {
 			if (error) {

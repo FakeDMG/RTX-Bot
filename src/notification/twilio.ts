@@ -1,18 +1,15 @@
 import {Link, Store} from '../store/model';
 import {Print, logger} from '../logger';
 import {Twilio} from 'twilio';
-import {config} from '../config';
+import {configs} from '../config';
 
-const twilio = config.notifications.twilio;
-let client: Twilio;
-
-if (twilio.accountSid && twilio.authToken) {
-	client = new Twilio(twilio.accountSid, twilio.authToken);
-}
+const twilio = configs.notification?.twilio;
 
 export function sendTwilioMessage(link: Link, store: Store) {
-	if (client) {
+	if (twilio) {
 		logger.debug('↗ sending twilio message');
+
+		const client = new Twilio(twilio.accountId, twilio.token);
 
 		(async () => {
 			const givenUrl = link.cartUrl ? link.cartUrl : link.url;

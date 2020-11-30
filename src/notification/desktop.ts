@@ -1,9 +1,9 @@
 import {Link, Store} from '../store/model';
 import {Print, logger} from '../logger';
-import {config} from '../config';
+import {configs} from '../config';
 import notifier from 'node-notifier';
 
-const desktop = config.notifications.desktop;
+const desktop = configs.notification?.desktop;
 
 export function sendDesktopNotification(link: Link, store: Store) {
 	if (desktop) {

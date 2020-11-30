@@ -1,32 +1,31 @@
 import {Link, Store} from '../store/model';
 import MqttClient, {IClientOptions, IClientPublishOptions} from 'mqtt';
 import {Print, logger} from '../logger';
-import {config} from '../config';
+import {configs} from '../config';
 
-const mqtt = config.notifications.mqtt;
-let client: MqttClient.Client;
+const mqtt = configs.notification?.mqtt;
 
-if (mqtt.broker) {
-	if (checkInsecureUsage(mqtt.password, mqtt.broker)) {
-		logger.warn(
-			'✖ Insecure transport of password - Only use credentials with MQTT brokers on private networks.'
-		);
-	} else {
+export function sendMqttMessage(link: Link, store: Store) {
+	if (mqtt) {
+		if (checkInsecureUsage(mqtt.password, mqtt.address)) {
+			logger.warn(
+				'✖ Insecure transport of password - Only use credentials with MQTT brokers on private networks.'
+			);
+			return;
+		}
+
 		const clientOptions: IClientOptions = {
 			clean: mqtt.clientId === '',
 			clientId: mqtt.clientId === '' ? undefined : mqtt.clientId,
 			password: mqtt.password === '' ? undefined : mqtt.password,
 			username: mqtt.username === '' ? undefined : mqtt.username
 		};
-		client = MqttClient.connect(
-			`mqtt://${mqtt.broker}:${mqtt.port}`,
+
+		const client = MqttClient.connect(
+			`mqtt://${mqtt.address}:${mqtt.port}`,
 			clientOptions
 		);
-	}
-}
 
-export function sendMqttMessage(link: Link, store: Store) {
-	if (client) {
 		logger.debug('↗ sending mqtt message');
 
 		(async () => {
