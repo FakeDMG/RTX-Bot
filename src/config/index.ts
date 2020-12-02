@@ -407,7 +407,7 @@ const store = {
 	country: envOrString(process.env.COUNTRY, 'usa'),
 	maxPrice: {
 		series: {
-			3060: envOrNumber(process.env.MAX_PRICE_SERIES_3060),
+			'3060ti': envOrNumber(process.env.MAX_PRICE_SERIES_3060TI),
 			3070: envOrNumber(process.env.MAX_PRICE_SERIES_3070),
 			3080: envOrNumber(process.env.MAX_PRICE_SERIES_3080),
 			3090: envOrNumber(process.env.MAX_PRICE_SERIES_3090),
@@ -421,7 +421,7 @@ const store = {
 			sf: envOrNumber(process.env.MAX_PRICE_SERIES_CORSAIR_SF),
 			sonyps5c: envOrNumber(process.env.MAX_PRICE_SERIES_SONYPS5C),
 			sonyps5de: envOrNumber(process.env.MAX_PRICE_SERIES_SONYPS5DE),
-			'test:series': -1,
+			'test:series': envOrNumber(process.env.MAX_PRICE_SERIES_TEST),
 			xboxss: -1,
 			xboxsx: -1
 		}
@@ -436,7 +436,7 @@ const store = {
 		};
 	}),
 	showOnlySeries: envOrArray(process.env.SHOW_ONLY_SERIES, [
-		'3060',
+		'3060ti',
 		'3070',
 		'3080',
 		'3090',

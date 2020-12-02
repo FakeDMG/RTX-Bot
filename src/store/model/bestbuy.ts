@@ -17,7 +17,7 @@ export const BestBuy: Store = {
 			model: 'test:model',
 			series: 'test:series',
 			url:
-				'https://www.bestbuy.com/site/xfx-amd-radeon-rx-580-gts-black-edition-8gb-gddr5-pci-express-3-0-graphics-card-black/6092641.p?skuId=6092641&intl=nosplash'
+				'https://www.bestbuy.com/site/evga-sc-ultra-gaming-nvidia-geforce-gtx-1660-ti-6gb-gddr6-pci-express-3-0-graphics-card-black-gray/6373500.p?skuId=6373500&intl=nosplash'
 		},
 		{
 			brand: 'nvidia',
@@ -425,7 +425,7 @@ export const BestBuy: Store = {
 			brand: 'nvidia',
 			cartUrl: 'https://api.bestbuy.com/click/-/6439402/cart',
 			model: 'founders edition',
-			series: '3060',
+			series: '3060ti',
 			url:
 				'https://www.bestbuy.com/site/nvidia-geforce-rtx-3060-ti-8gb-gddr6-pci-express-4-0-graphics-card-steel-and-black/6439402.p?skuId=6439402&intl=nosplash'
 		},
@@ -433,7 +433,7 @@ export const BestBuy: Store = {
 			brand: 'gigabyte',
 			cartUrl: 'https://api.bestbuy.com/click/-/6442484/cart',
 			model: 'gaming oc',
-			series: '3060',
+			series: '3060ti',
 			url:
 				'https://www.bestbuy.com/site/gigabyte-nvidia-geforce-rtx-3060-ti-gaming-oc-8g-gddr6-pci-express-4-0-graphics-card-black/6442484.p?skuId=6442484&intl=nosplash'
 		},
@@ -441,7 +441,7 @@ export const BestBuy: Store = {
 			brand: 'gigabyte',
 			cartUrl: 'https://api.bestbuy.com/click/-/6442485/cart',
 			model: 'eagle oc',
-			series: '3060',
+			series: '3060ti',
 			url:
 				'https://www.bestbuy.com/site/gigabyte-nvidia-geforce-rtx-3060-ti-eagle-oc-8g-gddr6-pci-express-4-0-graphics-card-black/6442485.p?skuId=6442485&intl=nosplash'
 		},
@@ -449,7 +449,7 @@ export const BestBuy: Store = {
 			brand: 'msi',
 			cartUrl: 'https://api.bestbuy.com/click/-/6441172/cart',
 			model: 'ventus 2x oc',
-			series: '3060',
+			series: '3060ti',
 			url:
 				'https://www.bestbuy.com/site/msi-geforce-rtx-3060-ti-ventus-2x-oc-bv-8gb-gddr6-pci-express-4-0-graphics-card-black-black/6441172.p?skuId=6441172&intl=nosplash'
 		}
