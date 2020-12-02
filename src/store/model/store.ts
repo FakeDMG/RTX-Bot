@@ -178,4 +178,7 @@ export type Store = {
 	waitUntil?: LoadEvent;
 	minPageSleep?: number;
 	maxPageSleep?: number;
+
+	proxyList?: string[];
+	currentProxyIndex?: number;
 };

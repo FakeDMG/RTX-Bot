@@ -1,24 +1,13 @@
 import {Browser} from 'puppeteer';
-import {adBlocker} from './adblocker';
 import {configs} from './config';
 import {getSleepTime} from './util';
 import {logger} from './logger';
 import puppeteer from 'puppeteer-extra';
-import resourceBlock from 'puppeteer-extra-plugin-block-resources';
 import stealthPlugin from 'puppeteer-extra-plugin-stealth';
 import {storeList} from './store/model';
 import {tryLookupAndLoop} from './store';
 
 puppeteer.use(stealthPlugin());
-if (configs.browser.lowBandwidth) {
-	puppeteer.use(
-		resourceBlock({
-			blockedTypes: new Set(['image', 'font'] as const)
-		})
-	);
-} else {
-	puppeteer.use(adBlocker);
-}
 
 let browser: Browser | undefined;
 

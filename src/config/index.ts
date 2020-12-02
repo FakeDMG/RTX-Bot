@@ -1,5 +1,5 @@
+import {readFileSync, readdirSync} from 'fs';
 import {config as config_} from 'dotenv';
-import fs from 'fs';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import merge from 'lodash/merge';
 import path from 'path';
@@ -184,16 +184,16 @@ const defaultConfig: IConfig = {
 };
 
 function configFactory(): IConfig {
-	const files = fs.readdirSync('src/config/');
+	const files = readdirSync('src/config/');
 
 	let config: IConfig = defaultConfig;
 
-	files.forEach(function (file) {
+	files.forEach(function (file: string) {
 		if (file.includes('yaml')) {
 			config = merge(
 				config,
 				yaml
-					.parseDocument(fs.readFileSync(`src/config/${file}`, 'utf8'), {
+					.parseDocument(readFileSync(`src/config/${file}`, 'utf8'), {
 						sortMapEntries: true
 					})
 					.toJSON()
@@ -454,6 +454,16 @@ const store = {
 	]),
 	stores: envOrArray(process.env.STORES, ['nvidia']).map((entry) => {
 		const [name, minPageSleep, maxPageSleep] = entry.match(/[^:]+/g) ?? [];
+
+		let proxyList;
+		try {
+			proxyList = readFileSync(`${name}.proxies`)
+				.toString()
+				.trim()
+				.split('\n')
+				.map((x) => x.trim());
+		} catch {}
+
 		return {
 			maxPageSleep: envOrNumberMax(
 				minPageSleep,
@@ -465,7 +475,8 @@ const store = {
 				maxPageSleep,
 				browser.minSleep
 			),
-			name: envOrString(name)
+			name: envOrString(name),
+			proxyList
 		};
 	})
 };
