@@ -37,6 +37,7 @@ getting `streetmerchant` running!
 - [git](https://git-scm.com/)
 - Clone this project `git clone https://github.com/jef/streetmerchant.git`
   - To checkout a particular ref, use `git checkout <ref name>` after cloning
+- Navigate to this project by entering `cd streetmerchant` 
 - Run `npm install`
 - Copy `.env-example` to a new file `.env` and edit the `.env` file to your liking using
   your [favorite text editor](https://code.visualstudio.com/)
@@ -113,7 +114,7 @@ environment variables are **optional**._
 
 | Environment variable | Description | Notes |
 |:---:|---|---|
-| `COUNTRY` | [Supported country](#supported-countries) you want to be scraped | Currently only used by Nvidia, default: `usa` |
+| `COUNTRY` | [Supported country](#supported-countries) you want to be scraped | Only used with `nvidia-api`, default: `usa` |
 | `MAX_PRICE_SERIES_3060TI` | Maximum price allowed for a match, applies 3060 Ti series cards (does not apply to these sites: Nvidia, Asus, EVGA) | Default: leave empty for no limit, otherwise enter a price (enter whole dollar amounts only, avoid use of: dollar symbols, commas, and periods.) e.g.: `1234` - Cards above `1234` will be skipped. |
 | `MAX_PRICE_SERIES_3070` | Maximum price allowed for a match, applies 3070 series cards (does not apply to these sites: Nvidia, Asus, EVGA) | Default: leave empty for no limit, otherwise enter a price (enter whole dollar amounts only, avoid use of: dollar symbols, commas, and periods.) e.g.: `1234` - Cards above `1234` will be skipped. |
 | `MAX_PRICE_SERIES_3080` | Maximum price allowed for a match, applies 3080 series cards (does not apply to these sites: Nvidia, Asus, EVGA) | Default: leave empty for no limit, otherwise enter a price (enter whole dollar amounts only, avoid use of: dollar symbols, commas, and periods.) e.g.: `1234` - Cards above `1234` will be skipped. |
@@ -147,6 +148,7 @@ environment variables are **optional**._
 | Amazon | `amazon`|
 | Amazon (CA) | `amazon-ca`|
 | Amazon (DE) | `amazon-de`|
+| Amazon (DE) Warehouse | `amazon-de-warehouse`|
 | Amazon (ES) | `amazon-es`|
 | Amazon (FR) | `amazon-fr`|
 | Amazon (IT) | `amazon-it`|
@@ -178,17 +180,20 @@ environment variables are **optional**._
 | Currys (UK) | `currys`|
 | Cyberport (DE) | `cyberport` |
 | eBuyer (UK) | `ebuyer`|
+| El Corte Inglés | `elcorteingles`|
 | ePrice (IT) | `eprice`|
 | Euronics (IT) | `euronics`|
 | Euronics (DE) | `euronics-de`|
 | EVGA | `evga`|
 | EVGA (EU) | `evga-eu`|
+| Expert | `expert`|
 | Galaxus (DE) | `galaxus`|
 | Game (UK) | `game`|
 | Gamestop | `gamestop`|
 | Gamestop (DE) | `gamestop-de`|
 | Kabum (BR) | `kabum`|
 | Mediamarkt (DE) | `mediamarkt`|
+| Medimax | `medimax`|
 | MemoryExpress (CA) | `memoryexpress`|
 | Micro Center | `microcenter`|
 | Mindfactory (DE) | `mindfactory` |
@@ -199,6 +204,7 @@ environment variables are **optional**._
 | Nvidia | `nvidia`|
 | Nvidia (API) | `nvidia-api`|
 | Office Depot | `officedepot`|
+| Otto | `otto`|
 | Overclockers (UK) | `overclockers`|
 | PCComponentes (ES) | `pccomponentes`|
 | PlayStation | `playstation`|
@@ -207,6 +213,8 @@ environment variables are **optional**._
 | Proshop (DK) | `proshop-dk`|
 | Saturn (DE) | `saturn`|
 | Scan (UK) | `scan`|
+| Smyths Toys (UK) | `smythstoys`|
+| Spielegrotte | `spielegrotte`|
 | Target | `target`|
 | Unieuro (IT) | `unieuro`|
 | Very (UK) | `very`|
@@ -275,6 +283,7 @@ environment variables are **optional**._
 | `palit` | `gamerock oc`, `gaming pro`, `gaming pro oc` |
 | `pny` | `dual fan`, `xlr8 revel`, `xlr8 uprising` |
 | `sony` | `ps5 console`, `ps5 digital` |
+| `xfx` | `merc`, `amd reference` |
 | `zotac` | `amp holo`, `amp extreme holo`, `trinity`, `trinity oc`, `twin edge`, `twin edge oc` |
 
 </details>

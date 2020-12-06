@@ -121,7 +121,6 @@ export const Print = {
 	maxPrice(
 		link: Link,
 		store: Store,
-		price: number,
 		maxPrice: number,
 		color?: boolean
 	): string {
@@ -130,14 +129,13 @@ export const Print = {
 				'✖ ' +
 				buildProductString(link, store, true) +
 				' :: ' +
-				chalk.yellow(`PRICE ${price} EXCEEDS LIMIT ${maxPrice}`)
+				chalk.yellow(`PRICE ${link.price ?? ''} EXCEEDS LIMIT ${maxPrice}`)
 			);
 		}
 
-		return `✖ ${buildProductString(
-			link,
-			store
-		)} :: PRICE ${price} EXCEEDS LIMIT ${maxPrice}`;
+		return `✖ ${buildProductString(link, store)} :: PRICE ${
+			link.price ?? ''
+		} EXCEEDS LIMIT ${maxPrice}`;
 	},
 	message(
 		message: string,

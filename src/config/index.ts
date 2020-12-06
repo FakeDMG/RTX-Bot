@@ -7,7 +7,7 @@ import {printBanner} from '../banner';
 import yaml from 'yaml';
 
 interface IDiscord {
-	hook: string;
+	webhook: string;
 	roles: string[];
 }
 

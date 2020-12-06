@@ -32,6 +32,10 @@ export const Box: Store = {
 		}),
 		urls: [
 			{
+				series: '3060ti',
+				url: 'https://www.box.co.uk/rtx-3060-ti-graphics-cards'
+			},
+			{
 				series: '3070',
 				url: 'https://www.box.co.uk/rtx-3070-graphics-cards'
 			},
@@ -42,6 +46,10 @@ export const Box: Store = {
 			{
 				series: '3090',
 				url: 'https://www.box.co.uk/rtx-3090-graphics-cards'
+			},
+			{
+				series: '3060ti',
+				url: 'https://www.box.co.uk/rtx-3060-ti-graphics-cards'
 			}
 		]
 	},

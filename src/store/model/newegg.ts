@@ -8,12 +8,12 @@ export const Newegg: Store = {
 			text: ['are you a human?']
 		},
 		inStock: {
-			container: 'div#ProductBuy .btn-primary',
+			container: '#ProductBuy',
 			text: ['add to cart']
 		},
 		maxPrice: {
-			container: 'div#app div.product-price > ul > li.price-current > strong',
-			euroFormat: false
+			container:
+				'#app > div.page-content > div.page-section > div > div > div.row-side > div.product-buy-box > div:nth-child(3) > div.product-price > ul > li.price-current'
 		}
 	},
 	links: [
@@ -688,6 +688,106 @@ export const Newegg: Store = {
 				'https://www.newegg.com/msi-radeon-rx-6800-rx-6800-16g/p/N82E16814137608'
 		},
 		{
+			brand: 'asrock',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814930047',
+			model: 'challenger',
+			series: 'rx6800',
+			url:
+				'https://www.newegg.com/asrock-radeon-rx-6800-rx6800-clp-16go/p/N82E16814930047'
+		},
+
+		{
+			brand: 'asrock',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814930048',
+			model: 'phantom gaming',
+			series: 'rx6800',
+			url:
+				'https://www.newegg.com/asrock-radeon-rx-6800-rx6800-pgd-16go/p/N82E16814930048'
+		},
+		{
+			brand: 'asrock',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814930049',
+			model: 'phantom gaming',
+			series: 'rx6800xt',
+			url:
+				'https://www.newegg.com/asrock-radeon-rx-6800-xt-rx6800xt-pgd-16go/p/N82E16814930049'
+		},
+		{
+			brand: 'asrock',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814930050',
+			model: 'taichi',
+			series: 'rx6800xt',
+			url:
+				'https://www.newegg.com/asrock-radeon-rx-6800-xt-rx6800xt-tcx-16go/p/N82E16814930050'
+		},
+		{
+			brand: 'asus',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814126478',
+			model: 'tuf',
+			series: 'rx6800',
+			url:
+				'https://www.newegg.com/asus-radeon-rx-6800-tuf-rx6800-o16g-gaming/p/N82E16814126478'
+		},
+		{
+			brand: 'asus',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814126476',
+			model: 'tuf',
+			series: 'rx6800xt',
+			url:
+				'https://www.newegg.com/asus-radeon-rx-6800-xt-tuf-rx6800xt-o16g-gaming/p/N82E16814126476'
+		},
+		{
+			brand: 'asus',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814126477',
+			model: 'strix',
+			series: 'rx6800',
+			url:
+				'https://www.newegg.com/asus-radeon-rx-6800-rog-strix-rx6800-o16g-gaming/p/N82E16814126477'
+		},
+		{
+			brand: 'asus',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814126475',
+			model: 'strix lc',
+			series: 'rx6800xt',
+			url:
+				'https://www.newegg.com/asus-radeon-rx-6800-xt-rog-strix-lc-rx6800xt-o16g-gaming/p/N82E16814126475'
+		},
+		{
+			brand: 'sapphire',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814202391',
+			model: 'nitro+',
+			series: 'rx6800xt',
+			url:
+				'https://www.newegg.com/sapphire-radeon-rx-6800-xt-11304-02-20g/p/N82E16814202391'
+		},
+		{
+			brand: 'sapphire',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814202390',
+			model: 'nitro+',
+			series: 'rx6800xt',
+			url:
+				'https://www.newegg.com/sapphire-radeon-rx-6800-xt-11304-01-20g/p/N82E16814202390'
+		},
+		{
+			brand: 'xfx',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814150844',
+			model: 'merc',
+			series: 'rx6800xt',
+			url:
+				'https://www.newegg.com/xfx-radeon-rx-6800-xt-rx-68xtacbd9/p/N82E16814150844'
+		},
+		{
 			brand: 'corsair',
 			cartUrl:
 				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16817139080',
@@ -704,6 +804,141 @@ export const Newegg: Store = {
 			series: 'sf',
 			url:
 				'https://www.newegg.com/corsair-sf-series-sf600-cp-9020182-na-600w/p/N82E16817139242'
+		},
+		{
+			brand: 'asus',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814126470',
+			model: 'strix',
+			series: '3060ti',
+			url:
+				'https://www.newegg.com/asus-geforce-rtx-3060-ti-rog-strix-rtx3060ti-o8g-gaming/p/N82E16814126470'
+		},
+		{
+			brand: 'msi',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814137611',
+			model: 'gaming x trio',
+			series: '3060ti',
+			url:
+				'https://www.newegg.com/msi-geforce-rtx-3060-ti-rtx-3060-ti-gaming-x-trio/p/N82E16814137611'
+		},
+		{
+			brand: 'zotac',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814500507',
+			model: 'twin edge oc',
+			series: '3060ti',
+			url:
+				'https://www.newegg.com/zotac-geforce-rtx-3060-ti-zt-a30610h-10m/p/N82E16814500507'
+		},
+		{
+			brand: 'asus',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814126471',
+			model: 'tuf',
+			series: '3060ti',
+			url:
+				'https://www.newegg.com/asus-geforce-rtx-3060-ti-tuf-rtx3060ti-o8g-gaming/p/N82E16814126471'
+		},
+		{
+			brand: 'evga',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814487535',
+			model: 'xc3',
+			series: '3060ti',
+			url:
+				'https://www.newegg.com/evga-geforce-rtx-3060-ti-08g-p5-3663-kr/p/N82E16814487535'
+		},
+		{
+			brand: 'asus',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814126468',
+			model: 'dual',
+			series: '3060ti',
+			url:
+				'https://www.newegg.com/asus-geforce-rtx-3060-ti-dual-rtx3060ti-o8g/p/N82E16814126468'
+		},
+		{
+			brand: 'msi',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814137612',
+			model: 'ventus 2x oc',
+			series: '3060ti',
+			url:
+				'https://www.newegg.com/msi-geforce-rtx-3060-ti-rtx-3060-ti-ventus-2x-oc/p/N82E16814137612'
+		},
+		{
+			brand: 'evga',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814487537',
+			model: 'ftw3 ultra',
+			series: '3060ti',
+			url:
+				'https://www.newegg.com/evga-geforce-rtx-3060-ti-08g-p5-3667-kr/p/N82E16814487537'
+		},
+		{
+			brand: 'gigabyte',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814932375',
+			model: 'aorus',
+			series: '3060ti',
+			url:
+				'https://www.newegg.com/gigabyte-geforce-rtx-3060-ti-gv-n306taorus-m-8gd/p/N82E16814932375'
+		},
+		{
+			brand: 'gigabyte',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814932376',
+			model: 'gaming oc',
+			series: '3060ti',
+			url:
+				'https://www.newegg.com/gigabyte-geforce-rtx-3060-ti-gv-n306tgamingoc-pro-8gd/p/N82E16814932376'
+		},
+		{
+			brand: 'gigabyte',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814932379',
+			model: 'eagle',
+			series: '3060ti',
+			url:
+				'https://www.newegg.com/gigabyte-geforce-rtx-3060-ti-gv-n306teagle-8gd/p/N82E16814932379'
+		},
+		{
+			brand: 'gigabyte',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814932377',
+			model: 'gaming oc',
+			series: '3060ti',
+			url:
+				'https://www.newegg.com/gigabyte-geforce-rtx-3060-ti-gv-n306tgaming-oc-8gd/p/N82E16814932377'
+		},
+		{
+			brand: 'zotac',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814500506',
+			model: 'twin edge',
+			series: '3060ti',
+			url:
+				'https://www.newegg.com/zotac-geforce-rtx-3060-ti-zt-a30610e-10m/p/N82E16814500506'
+		},
+		{
+			brand: 'gigabyte',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814932378',
+			model: 'eagle',
+			series: '3060ti',
+			url:
+				'https://www.newegg.com/gigabyte-geforce-rtx-3060-ti-gv-n306teagle-oc-8gd/p/N82E16814932378'
+		},
+		{
+			brand: 'asus',
+			cartUrl:
+				'https://secure.newegg.com/Shopping/AddtoCart.aspx?Submit=ADD&ItemList=N82E16814126474',
+			model: 'gaming',
+			series: '3060ti',
+			url:
+				'https://www.newegg.com/asus-geforce-rtx-3060-ti-ko-rtx3060ti-o8g-gaming/p/N82E16814126474'
 		}
 	],
 	name: 'newegg',
