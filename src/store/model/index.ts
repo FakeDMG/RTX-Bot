@@ -1,4 +1,3 @@
-import {config, defaultStoreData} from '../../config';
 import {Adorama} from './adorama';
 import {Alternate} from './alternate';
 import {AlternateNL} from './alternate-nl';
@@ -74,7 +73,6 @@ import {Saturn} from './saturn';
 import {Scan} from './scan';
 import {SmythsToys} from './smythstoys';
 import {Spielegrotte} from './spielegrotte';
-import {Store} from './store';
 import {Target} from './target';
 import {TopAchat} from './topachat';
 import {ToysRUs} from './toysrus';
@@ -86,6 +84,7 @@ import {WalmartCa} from './walmart-ca';
 import {Wipoid} from './wipoid';
 import {Xbox} from './xbox';
 import {Zotac} from './zotac';
+import {config} from '../../config';
 import {logger} from '../../logger';
 
 export const storeList = new Map([
@@ -195,77 +194,71 @@ function filterBrandsSeriesModels() {
 		}
 
 		if (store.minPageSleep === undefined) {
-			store.minPageSleep = defaultStoreData.minPageSleep;
+			store.minPageSleep = config.browser.page.sleep?.min;
 		}
 
 		if (store.maxPageSleep === undefined) {
-			store.maxPageSleep = defaultStoreData.maxPageSleep;
+			store.maxPageSleep = config.browser.page.sleep?.max;
 		}
 	}
 }
 
 function printConfig() {
-	if (config.store.stores.length > 0) {
-		logger.info(
-			`ℹ selected stores: ${config.store.stores
-				.map((store) => store.name)
-				.join(', ')}`
-		);
+	if (config.merchandise === undefined) {
+		throw new Error('no merchandise configuration');
 	}
 
-	if (config.store.showOnlyBrands.length > 0) {
-		logger.info(
-			`ℹ selected brands: ${config.store.showOnlyBrands.join(', ')}`
-		);
+	if (config.merchandise.stores !== undefined) {
+		const stores = config.merchandise.stores
+			.map((store) => store.name)
+			.join(', ');
+		logger.info(`ℹ selected stores: ${stores}`);
 	}
 
-	if (config.store.showOnlyModels.length > 0) {
-		logger.info(
-			`ℹ selected models: ${config.store.showOnlyModels
-				.map((entry) => {
-					return entry.series
-						? entry.name + ' (' + entry.series + ')'
-						: entry.name;
-				})
-				.join(', ')}`
-		);
+	if (config.merchandise.brands !== undefined) {
+		const brands = config.merchandise.brands.join(', ');
+		logger.info(`ℹ selected brands: ${brands}`);
 	}
 
-	if (config.store.showOnlySeries.length > 0) {
-		logger.info(
-			`ℹ selected series: ${config.store.showOnlySeries.join(', ')}`
-		);
-	}
-}
+	if (config.merchandise.models !== undefined) {
+		const models = config.merchandise.models
+			.map((m) => {
+				if (m.series) {
+					return m.series
+						.map((s) => `${m.name} (${s.name})`)
+						.join(', ');
+				}
 
-function warnIfStoreDeprecated(store: Store) {
-	switch (store.name) {
-		case 'nvidia':
-		case 'nvidia-api':
-			if (config.store.country === 'usa')
-				logger.warn(`${store.name} is deprecated in favor of bestbuy`);
-			break;
-		case 'evga':
-			logger.warn(
-				`${store.name} is deprecated since they only support queuing`
-			);
-			break;
-		default:
+				return `${m.name}`;
+			})
+			.join(', ');
+
+		logger.info(`ℹ selected models: ${models}`);
+	}
+
+	if (config.merchandise.series !== undefined) {
+		const series = config.merchandise.series
+			.map((s) => (s.maxPrice ? `${s.name} ($${s.maxPrice})` : s.name))
+			.join(', ');
+		logger.info(`ℹ selected series: ${series}`);
 	}
 }
 
 export function updateStores() {
 	stores.clear();
 
-	for (const storeData of config.store.stores) {
+	if (config.merchandise?.stores === undefined) {
+		throw new Error('no merchandise configuration');
+	}
+
+	for (const storeData of config.merchandise?.stores) {
 		const store = storeList.get(storeData.name);
 
 		if (store) {
-			warnIfStoreDeprecated(store);
 			stores.set(storeData.name, store);
-			store.minPageSleep = storeData.minPageSleep;
-			store.maxPageSleep = storeData.maxPageSleep;
-			store.proxyList = storeData.proxyList;
+			store.minPageSleep = storeData.page?.sleep?.min;
+			store.maxPageSleep = storeData.page?.sleep?.max;
+			store.proxyList = config.proxies;
 		} else {
 			logger.warn(`No store named ${storeData.name}, skipping.`);
 		}
@@ -276,18 +269,6 @@ export function updateStores() {
 }
 
 updateStores();
-
-export function getAllBrands() {
-	return Array.from(brands);
-}
-
-export function getAllSeries() {
-	return Array.from(series);
-}
-
-export function getAllModels() {
-	return Array.from(models);
-}
 
 export function getStores() {
 	return stores;

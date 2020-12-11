@@ -2,7 +2,7 @@ import {Link, Store} from './store';
 import {config} from '../../config';
 import {logger} from '../../logger';
 
-const microCenterLocations = config.store.microCenterLocation;
+const microCenterLocations = config.merchandise?.microCenterLocation ?? ['web'];
 
 const microCenterLocationToId: Map<string, string> = new Map([
 	['web', '029'],

@@ -1,9 +1,9 @@
 import {Link, Store} from '../store/model';
 import {Print, logger} from '../logger';
 import Push, {PushoverMessage} from 'pushover-notifications';
-import {configs} from '../config';
+import {config} from '../config';
 
-const pushover = configs.notification?.pushover;
+const pushover = config.notification?.pushover;
 
 export function sendPushoverNotification(link: Link, store: Store) {
 	if (pushover) {

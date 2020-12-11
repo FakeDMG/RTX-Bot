@@ -1,13 +1,10 @@
 import {Link, Store} from '../store/model';
 import {Print, logger} from '../logger';
 import Mail from 'nodemailer/lib/mailer';
-import {configs} from '../config';
+import {config} from '../config';
 import {createTransporter} from './util';
 
-const [email, phone] = [
-	configs.notification?.email,
-	configs.notification?.phone
-];
+const [email, phone] = [config.notification?.email, config.notification?.phone];
 
 const availableCarriers = new Map([
 	['att', 'txt.att.net'],

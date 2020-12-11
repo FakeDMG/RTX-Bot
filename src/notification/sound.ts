@@ -1,10 +1,10 @@
 import playerLib, {PlaySound} from 'play-sound';
-import {configs} from '../config';
+import {config} from '../config';
 import fs from 'fs';
 import {logger} from '../logger';
 
 let player: PlaySound;
-const sound = configs.notification?.sound;
+const sound = config.notification?.sound;
 
 export function playSound() {
 	if (sound) {

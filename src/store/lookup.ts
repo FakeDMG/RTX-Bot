@@ -128,7 +128,7 @@ async function lookup(browser: Browser, store: Store) {
 			continue;
 		}
 
-		if (config.page.inStockWaitTime && inStock[link.url]) {
+		if (config.browser.page.inStockWaitTime && inStock[link.url]) {
 			logger.info(Print.inStockWaiting(link, store, true));
 			continue;
 		}
@@ -137,7 +137,7 @@ async function lookup(browser: Browser, store: Store) {
 
 		const useAdBlock =
 			!config.browser.lowBandwidth && !store.disableAdBlocker;
-		const customContext = config.browser.isIncognito;
+		const customContext = config.browser.incognito;
 
 		const context = customContext
 			? await browser.createIncognitoBrowserContext()
@@ -145,7 +145,7 @@ async function lookup(browser: Browser, store: Store) {
 		const page = await context.newPage();
 		await page.setRequestInterception(true);
 
-		page.setDefaultNavigationTimeout(config.page.timeout);
+		page.setDefaultNavigationTimeout(config.browser.page.timeout);
 		await page.setUserAgent(await getRandomUserAgent());
 
 		let adBlockRequestHandler: any;
@@ -251,7 +251,10 @@ async function lookupCard(
 
 	if (await lookupCardInStock(store, page, link)) {
 		const givenUrl =
-			link.cartUrl && config.store.autoAddToCart
+			link.cartUrl &&
+			(config.merchandise?.stores?.find((s) => s.name === store.name)
+				?.autoAddToCard ??
+				false)
 				? link.cartUrl
 				: link.url;
 		logger.info(`${Print.inStock(link, store, true)}\n${givenUrl}`);
@@ -264,15 +267,15 @@ async function lookupCard(
 
 		sendNotification(link, store);
 
-		if (config.page.inStockWaitTime) {
+		if (config.browser.page.inStockWaitTime) {
 			inStock[link.url] = true;
 
 			setTimeout(() => {
 				inStock[link.url] = false;
-			}, 1000 * config.page.inStockWaitTime);
+			}, 1000 * config.browser.page.inStockWaitTime);
 		}
 
-		if (config.page.screenshot) {
+		if (config.browser.screenshot) {
 			logger.debug('ℹ saving screenshot');
 
 			link.screenshot = `success-${Date.now()}.png`;
@@ -312,7 +315,9 @@ async function lookupCardInStock(store: Store, page: Page, link: Link) {
 	}
 
 	if (store.labels.maxPrice) {
-		const maxPrice = config.store.maxPrice.series[link.series];
+		const maxPrice =
+			config.merchandise?.series?.find((s) => s.name === link.series)
+				?.maxPrice ?? 0;
 
 		link.price = await getPrice(page, store.labels.maxPrice, baseOptions);
 

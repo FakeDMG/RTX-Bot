@@ -1,48 +1,39 @@
-import {existsSync, readFileSync, readdirSync} from 'fs';
-import {config as config_} from 'dotenv';
+import {readFileSync, readdirSync} from 'fs';
 import merge from 'lodash/merge'; // eslint-disable-line import/no-extraneous-dependencies
-import path from 'path';
 import {printBanner} from '../banner';
 import yaml from 'yaml';
 
-interface IDiscord {
-	webhook: string;
-	roles: string[];
+interface ISeries {
+	name: string;
+	maxPrice?: number;
 }
 
-interface IPhone {
-	carrier: string;
-	number: string;
-}
-
-interface ISlack {
-	channels: string[];
-	token: string;
-}
-
-interface ISelector {
-	container: string;
-	text?: string;
-	euroFormat?: boolean;
-}
-
-interface ILink {
-	brand: string;
-	cartUrl?: string;
-	maxPrice: number;
-	model: string;
-	series: string;
-	url: string;
-}
-
-interface IStore {
-	backOffStatusCodes: number[];
-	labels: {
-		captcha: ISelector[];
-		inStock: ISelector[];
-		maxPrice: ISelector[];
+interface IPage {
+	backoff: {
+		max: number;
+		min: number;
 	};
-	links: ILink[];
+	inStockWaitTime: number;
+	sleep: {
+		max: number;
+		min: number;
+	};
+	timeout: number;
+}
+
+interface IMerchandise {
+	brands?: string[];
+	microCenterLocation?: string[];
+	models?: Array<{
+		name: string;
+		series?: ISeries[];
+	}>;
+	series?: ISeries[];
+	stores?: Array<{
+		autoAddToCard?: boolean;
+		name: string;
+		page?: IPage;
+	}>;
 }
 
 interface IConfig {
@@ -52,31 +43,23 @@ interface IConfig {
 	};
 	browser: {
 		headless: boolean;
+		height: number;
 		lowBandwidth?: boolean;
 		incognito?: boolean;
 		open: boolean;
-		page: {
-			backoff: {
-				min: number;
-				max: number;
-			};
-			height: number;
-			inStockWaitTime?: number;
-			sleep: {
-				min: number;
-				max: number;
-			};
-			timeout?: number;
-			width: number;
-		};
+		page: IPage;
 		screenshot: boolean;
 		trusted?: boolean;
+		width: number;
 	};
-	docker?: boolean;
-	stores?: IStore[];
+	docker: boolean;
+	merchandise?: IMerchandise;
 	notification?: {
 		desktop?: boolean;
-		discord?: IDiscord[];
+		discord?: Array<{
+			webhook: string;
+			roles: string[];
+		}>;
 		email?: {
 			password?: string;
 			smtp?: {
@@ -116,7 +99,10 @@ interface IConfig {
 				pattern: string;
 			};
 		};
-		phone?: IPhone[];
+		phone?: Array<{
+			carrier: string;
+			number: string;
+		}>;
 		pushbullet?: {
 			apiKey: string;
 		};
@@ -127,7 +113,10 @@ interface IConfig {
 			username: string;
 			token: string;
 		};
-		slack?: ISlack[];
+		slack?: Array<{
+			channels: string[];
+			token: string;
+		}>;
 		sound?: {
 			filename: string;
 			player?: string;
@@ -158,32 +147,31 @@ interface IConfig {
 		};
 	};
 	logLevel: string;
-	proxy?: {
-		address: string;
-		protocol: string;
-		port: number;
-	};
+	proxies?: string[];
 }
 
 const defaultConfig: IConfig = {
 	browser: {
 		headless: true,
+		height: 1080,
 		open: true,
 		page: {
 			backoff: {
-				max: 3600000,
-				min: 0
+				max: 30000,
+				min: 10000
 			},
-			height: 1080,
+			inStockWaitTime: 10000,
 			sleep: {
-				max: 10000,
-				min: 5000
+				max: 30000,
+				min: 10000
 			},
-			width: 1920
+			timeout: 10000
 		},
-		screenshot: true
+		screenshot: true,
+		width: 1920
 	},
-	logLevel: 'info'
+	docker: process.env.DOCKER ? process.env.DOCKER === 'true' : false,
+	logLevel: process.env.LOG_LEVEL ? process.env.LOG_LEVEL : 'info'
 };
 
 function configFactory(): IConfig {
@@ -207,296 +195,6 @@ function configFactory(): IConfig {
 	return config;
 }
 
-export const configs = configFactory();
+export const config = configFactory();
 
-printBanner(configs.ascii?.banner, configs.ascii?.color);
-
-config_({path: path.resolve(__dirname, '../../.env')});
-
-/**
- * Returns environment variable, given array, or default array.
- *
- * @param environment Interested environment variable.
- * @param array Default array. If not set, is `[]`.
- */
-function envOrArray(
-	environment: string | undefined,
-	array?: string[]
-): string[] {
-	return (environment
-		? environment.includes('\n')
-			? environment.split('\n')
-			: environment.split(',')
-		: array ?? []
-	).map((s) => s.trim());
-}
-
-/**
- * Returns environment variable, given boolean, or default boolean.
- *
- * @param environment Interested environment variable.
- * @param boolean Default boolean. If not set, is `true`.
- */
-function envOrBoolean(
-	environment: string | undefined,
-	boolean?: boolean
-): boolean {
-	return environment ? environment === 'true' : boolean ?? true;
-}
-
-/**
- * Returns environment variable, given string, or default string.
- *
- * @param environment Interested environment variable.
- * @param string Default string. If not set, is `''`.
- */
-function envOrString(environment: string | undefined, string?: string): string {
-	return environment ? environment : string ?? '';
-}
-
-/**
- * Returns environment variable, given number, or default number.
- *
- * @param environment Interested environment variable.
- * @param number Default number. If not set, is `0`.
- */
-function envOrNumber(environment: string | undefined, number?: number): number {
-	return environment ? Number(environment) : number ?? 0;
-}
-
-/**
- * Returns environment variable, given number, or default number,
- * while handling .env input errors for a Min/Max pair.
- * .env errors handled:
- * - Min/Max swapped (Min larger than Max, Max smaller than Min)
- * - Min larger than default Max when no Max defined
- * - Max smaller than default Min when no Min defined
- *
- * @param environmentMin Min environment variable of Min/Max pair.
- * @param environmentMax Max environment variable of Min/Max pair.
- * @param number Default number. If not set, is `0`.
- */
-function envOrNumberMin(
-	environmentMin: string | undefined,
-	environmentMax: string | undefined,
-	number?: number
-) {
-	if (environmentMin || environmentMax) {
-		if (environmentMin && environmentMax) {
-			return Number(
-				Number(environmentMin) < Number(environmentMax)
-					? environmentMin
-					: environmentMax
-			);
-		}
-
-		if (environmentMax) {
-			return Number(environmentMax) < (number ?? 0)
-				? Number(environmentMax)
-				: number ?? 0;
-		}
-
-		if (environmentMin) {
-			return Number(environmentMin);
-		}
-	}
-
-	return number ?? 0;
-}
-
-/**
- * Returns environment variable, given number, or default number,
- * while handling .env input errors for a Min/Max pair.
- * .env errors handled:
- * - Min/Max swapped (Min larger than Max, Max smaller than Min)
- * - Min larger than default Max when no Max defined
- * - Max smaller than default Min when no Min defined
- *
- * @param environmentMin Min environment variable of Min/Max pair.
- * @param environmentMax Max environment variable of Min/Max pair.
- * @param number Default number. If not set, is `0`.
- */
-function envOrNumberMax(
-	environmentMin: string | undefined,
-	environmentMax: string | undefined,
-	number?: number
-) {
-	if (environmentMin || environmentMax) {
-		if (environmentMin && environmentMax) {
-			return Number(
-				Number(environmentMin) < Number(environmentMax)
-					? environmentMax
-					: environmentMax
-			);
-		}
-
-		if (environmentMin) {
-			return Number(environmentMin) > (number ?? 0)
-				? Number(environmentMin)
-				: number ?? 0;
-		}
-
-		if (environmentMax) {
-			return Number(environmentMax);
-		}
-	}
-
-	return number ?? 0;
-}
-
-const browser = {
-	isHeadless: envOrBoolean(process.env.HEADLESS),
-	isIncognito: envOrBoolean(process.env.INCOGNITO, false),
-	isTrusted: envOrBoolean(process.env.BROWSER_TRUSTED, false),
-	lowBandwidth: envOrBoolean(process.env.LOW_BANDWIDTH, false),
-	maxBackoff: envOrNumberMax(
-		process.env.PAGE_BACKOFF_MIN,
-		process.env.PAGE_BACKOFF_MAX,
-		3600000
-	),
-	maxSleep: envOrNumberMax(
-		process.env.PAGE_SLEEP_MIN,
-		process.env.PAGE_SLEEP_MAX,
-		10000
-	),
-	minBackoff: envOrNumberMin(
-		process.env.PAGE_BACKOFF_MIN,
-		process.env.PAGE_BACKOFF_MAX,
-		10000
-	),
-	minSleep: envOrNumberMin(
-		process.env.PAGE_SLEEP_MIN,
-		process.env.PAGE_SLEEP_MAX,
-		5000
-	),
-	open: envOrBoolean(process.env.OPEN_BROWSER),
-	userAgent: ''
-};
-
-const docker = envOrBoolean(process.env.DOCKER, false);
-
-const logLevel = envOrString(process.env.LOG_LEVEL, 'info');
-
-const nvidia = {
-	addToCardAttempts: envOrNumber(process.env.NVIDIA_ADD_TO_CART_ATTEMPTS, 10),
-	sessionTtl: envOrNumber(process.env.NVIDIA_SESSION_TTL, 60000)
-};
-
-const page = {
-	height: 1080,
-	inStockWaitTime: envOrNumber(process.env.IN_STOCK_WAIT_TIME),
-	screenshot: envOrBoolean(process.env.SCREENSHOT),
-	timeout: envOrNumber(process.env.PAGE_TIMEOUT, 30000),
-	userAgents: envOrArray(process.env.USER_AGENT, [
-		'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36'
-	]),
-	width: 1920
-};
-
-const proxy = {
-	address: envOrString(process.env.PROXY_ADDRESS),
-	port: envOrNumber(process.env.PROXY_PORT, 80),
-	protocol: envOrString(process.env.PROXY_PROTOCOL, 'http')
-};
-
-// Check for deprecated configuration values
-if (process.env.MAX_PRICE) {
-	console.warn(
-		'ℹ MAX_PRICE is deprecated, please use MAX_PRICE_SERIES_{{series}}'
-	);
-}
-
-const store = {
-	autoAddToCart: envOrBoolean(process.env.AUTO_ADD_TO_CART, true),
-	country: envOrString(process.env.COUNTRY, 'usa'),
-	maxPrice: {
-		series: {
-			'3060ti': envOrNumber(process.env.MAX_PRICE_SERIES_3060TI),
-			3070: envOrNumber(process.env.MAX_PRICE_SERIES_3070),
-			3080: envOrNumber(process.env.MAX_PRICE_SERIES_3080),
-			3090: envOrNumber(process.env.MAX_PRICE_SERIES_3090),
-			darkhero: envOrNumber(process.env.MAX_PRICE_SERIES_DARKHERO),
-			rx6800: envOrNumber(process.env.MAX_PRICE_SERIES_RX6800),
-			rx6800xt: envOrNumber(process.env.MAX_PRICE_SERIES_RX6800XT),
-			rx6900xt: envOrNumber(process.env.MAX_PRICE_SERIES_RX6900XT),
-			ryzen5600: envOrNumber(process.env.MAX_PRICE_SERIES_RYZEN5600),
-			ryzen5800: envOrNumber(process.env.MAX_PRICE_SERIES_RYZEN5800),
-			ryzen5900: envOrNumber(process.env.MAX_PRICE_SERIES_RYZEN5900),
-			ryzen5950: envOrNumber(process.env.MAX_PRICE_SERIES_RYZEN5950),
-			sf: envOrNumber(process.env.MAX_PRICE_SERIES_CORSAIR_SF),
-			sonyps5c: envOrNumber(process.env.MAX_PRICE_SERIES_SONYPS5C),
-			sonyps5de: envOrNumber(process.env.MAX_PRICE_SERIES_SONYPS5DE),
-			'test:series': envOrNumber(process.env.MAX_PRICE_SERIES_TEST),
-			xboxss: -1,
-			xboxsx: -1
-		}
-	},
-	microCenterLocation: envOrArray(process.env.MICROCENTER_LOCATION, ['web']),
-	showOnlyBrands: envOrArray(process.env.SHOW_ONLY_BRANDS),
-	showOnlyModels: envOrArray(process.env.SHOW_ONLY_MODELS).map((entry) => {
-		const [name, series] = entry.match(/[^:]+/g) ?? [];
-		return {
-			name: envOrString(name),
-			series: envOrString(series)
-		};
-	}),
-	showOnlySeries: envOrArray(process.env.SHOW_ONLY_SERIES, [
-		'3060ti',
-		'3070',
-		'3080',
-		'3090',
-		'rx6800',
-		'rx6800xt',
-		'rx6900xt',
-		'ryzen5600',
-		'ryzen5800',
-		'ryzen5900',
-		'ryzen5950',
-		'sonyps5c',
-		'sonyps5de',
-		'xboxss',
-		'xboxsx'
-	]),
-	stores: envOrArray(process.env.STORES, ['nvidia']).map((entry) => {
-		const [name, minPageSleep, maxPageSleep] = entry.match(/[^:]+/g) ?? [];
-
-		let proxyList;
-		try {
-			proxyList = readFileSync(`${name}.proxies`)
-				.toString()
-				.trim()
-				.split('\n')
-				.map((x) => x.trim());
-		} catch {}
-
-		return {
-			maxPageSleep: envOrNumberMax(
-				minPageSleep,
-				maxPageSleep,
-				browser.maxSleep
-			),
-			minPageSleep: envOrNumberMin(
-				minPageSleep,
-				maxPageSleep,
-				browser.minSleep
-			),
-			name: envOrString(name),
-			proxyList
-		};
-	})
-};
-
-export const defaultStoreData = {
-	maxPageSleep: browser.maxSleep,
-	minPageSleep: browser.minSleep
-};
-
-export const config = {
-	browser,
-	docker,
-	logLevel,
-	nvidia,
-	page,
-	proxy,
-	store
-};
+printBanner(config.ascii?.banner, config.ascii?.color);

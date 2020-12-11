@@ -1,9 +1,9 @@
 import {Link, Store} from '../store/model';
 import {Print, logger} from '../logger';
 import {WebClient} from '@slack/web-api';
-import {configs} from '../config';
+import {config} from '../config';
 
-const slack = configs.notification?.slack;
+const slack = config.notification?.slack;
 
 export function sendSlackMessage(link: Link, store: Store) {
 	if (slack) {

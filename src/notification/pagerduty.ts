@@ -1,10 +1,10 @@
 import {Link, Store} from '../store/model';
 import {Print, logger} from '../logger';
 import PDClient from 'node-pagerduty';
-import {configs} from '../config';
+import {config} from '../config';
 
 const pd = new PDClient('');
-const pagerduty = configs.notification?.pagerduty;
+const pagerduty = config.notification?.pagerduty;
 
 export function sendPagerDutyNotification(link: Link, store: Store) {
 	if (pagerduty) {

@@ -1,8 +1,8 @@
 import Mail from 'nodemailer/lib/mailer';
-import {configs} from '../config';
+import {config} from '../config';
 import nodemailer from 'nodemailer';
 
-const email = configs.notification?.email;
+const email = config.notification?.email;
 
 export function createTransporter(): Mail {
 	const transportOptions: any = {};

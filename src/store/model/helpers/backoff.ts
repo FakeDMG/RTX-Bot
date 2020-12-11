@@ -31,7 +31,7 @@ export async function processBackoffDelay(
 	let backoff = stores[store.name];
 
 	if (!backoff) {
-		backoff = {count: 0, time: config.browser.minBackoff};
+		backoff = {count: 0, time: config.browser.page.backoff.min};
 		stores[store.name] = backoff;
 	}
 
@@ -40,7 +40,7 @@ export async function processBackoffDelay(
 			backoff.count--;
 			backoff.time = Math.max(
 				backoff.time / 2,
-				config.browser.minBackoff
+				config.browser.page.backoff.min
 			);
 		}
 
@@ -55,7 +55,7 @@ export async function processBackoffDelay(
 	await delay(backoff.time);
 
 	backoff.count++;
-	backoff.time = Math.min(backoff.time * 2, config.browser.maxBackoff);
+	backoff.time = Math.min(backoff.time * 2, config.browser.page.backoff.min);
 
 	return backoffTime;
 }

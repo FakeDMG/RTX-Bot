@@ -1,9 +1,9 @@
 import {Link, Store} from '../store/model';
 import {Print, logger} from '../logger';
 import Twitter from 'twitter';
-import {configs} from '../config';
+import {config} from '../config';
 
-const twitter = configs.notification?.twitter;
+const twitter = config.notification?.twitter;
 
 export function sendTweet(link: Link, store: Store) {
 	if (twitter) {

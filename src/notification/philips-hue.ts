@@ -1,9 +1,9 @@
 import type Api from 'node-hue-api/lib/api/Api';
-import {configs} from '../config';
+import {config} from '../config';
 import {v3 as hueAPI} from 'node-hue-api';
 import {logger} from '../logger';
 
-const philipsHue = configs.notification?.philipsHue;
+const philipsHue = config.notification?.philipsHue;
 const apiKey = philipsHue?.apiKey;
 const bridgeIp = philipsHue?.lan?.address;
 const lightIds = philipsHue?.light?.ids;

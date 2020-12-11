@@ -1,9 +1,9 @@
 import {Link, Store} from '../store/model';
 import {Print, logger} from '../logger';
 import PushBullet from '@jef/pushbullet';
-import {configs} from '../config';
+import {config} from '../config';
 
-const pushbullet = configs.notification?.pushbullet;
+const pushbullet = config.notification?.pushbullet;
 
 export function sendPushbulletNotification(link: Link, store: Store) {
 	if (pushbullet) {

@@ -1,6 +1,6 @@
 import {Link, Store} from './store/model';
 import chalk from 'chalk';
-import {configs} from './config';
+import {config} from './config';
 import winston from 'winston';
 
 const prettyJson = winston.format.printf((info) => {
@@ -25,7 +25,7 @@ export const logger = winston.createLogger({
 		}),
 		prettyJson
 	),
-	level: configs.logLevel,
+	level: config.logLevel,
 	transports: [new winston.transports.Console({})]
 });
 

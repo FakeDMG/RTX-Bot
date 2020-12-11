@@ -1,9 +1,9 @@
 import {Link, Store} from '../store/model';
 import {Print, logger} from '../logger';
 import {TelegramClient} from 'messaging-api-telegram';
-import {configs} from '../config';
+import {config} from '../config';
 
-const telegram = configs.notification?.telegram;
+const telegram = config.notification?.telegram;
 
 export function sendTelegramMessage(link: Link, store: Store) {
 	if (telegram) {

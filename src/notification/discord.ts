@@ -1,9 +1,9 @@
 import {Link, Store} from '../store/model';
 import Discord from 'discord.js';
-import {configs} from '../config';
+import {config} from '../config';
 import {logger} from '../logger';
 
-const discord = configs.notification?.discord;
+const discord = config.notification?.discord;
 
 function getIdAndToken(webhook: string) {
 	const match = /.*\/webhooks\/(\d+)\/(.+)/.exec(webhook);

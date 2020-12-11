@@ -3,9 +3,9 @@ import {Print, logger} from '../logger';
 import {RefreshableAuthProvider, StaticAuthProvider} from 'twitch-auth';
 import {existsSync, promises, readFileSync} from 'fs';
 import {ChatClient} from 'twitch-chat-client';
-import {configs} from '../config';
+import {config} from '../config';
 
-const twitch = configs.notification?.twitch;
+const twitch = config.notification?.twitch;
 
 export function sendTwitchMessage(link: Link, store: Store) {
 	if (twitch) {

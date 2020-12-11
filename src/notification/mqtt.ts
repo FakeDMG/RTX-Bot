@@ -1,9 +1,9 @@
 import {Link, Store} from '../store/model';
 import MqttClient, {IClientOptions, IClientPublishOptions} from 'mqtt';
 import {Print, logger} from '../logger';
-import {configs} from '../config';
+import {config} from '../config';
 
-const mqtt = configs.notification?.mqtt;
+const mqtt = config.notification?.mqtt;
 
 export function sendMqttMessage(link: Link, store: Store) {
 	if (mqtt) {

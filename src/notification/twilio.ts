@@ -1,9 +1,9 @@
 import {Link, Store} from '../store/model';
 import {Print, logger} from '../logger';
 import {Twilio} from 'twilio';
-import {configs} from '../config';
+import {config} from '../config';
 
-const twilio = configs.notification?.twilio;
+const twilio = config.notification?.twilio;
 
 export function sendTwilioMessage(link: Link, store: Store) {
 	if (twilio) {

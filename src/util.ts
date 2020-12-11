@@ -1,6 +1,6 @@
 import {StatusCodeRangeArray, Store} from './store/model';
 import {Page} from 'puppeteer';
-import {configs} from './config';
+import {config} from './config';
 import {disableBlockerInPage} from './adblocker';
 import {getRandom} from 'random-useragent';
 import {logger} from './logger';
@@ -41,7 +41,7 @@ export function isStatusCodeInRange(
 }
 
 export async function closePage(page: Page) {
-	if (!configs.browser.lowBandwidth) {
+	if (!config.browser.lowBandwidth) {
 		await disableBlockerInPage(page);
 	}
 

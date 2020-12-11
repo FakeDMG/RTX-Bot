@@ -1,10 +1,10 @@
 import {Link, Store} from '../store/model';
 import {Print, logger} from '../logger';
 import Mail from 'nodemailer/lib/mailer';
-import {configs} from '../config';
+import {config} from '../config';
 import {createTransporter} from './util';
 
-const email = configs.notification?.email;
+const email = config.notification?.email;
 
 export function sendEmail(link: Link, store: Store) {
 	if (email) {

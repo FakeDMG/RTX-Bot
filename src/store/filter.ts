@@ -1,4 +1,4 @@
-import {Link} from './model';
+import {Brand, Link, Model, Series} from './model';
 import {config} from '../config';
 
 /**
@@ -6,12 +6,12 @@ import {config} from '../config';
  *
  * @param brand The brand of the GPU
  */
-function filterBrand(brand: Link['brand']): boolean {
-	if (config.store.showOnlyBrands.length === 0) {
+function filterBrand(brand: Brand): boolean {
+	if (config.merchandise?.brands === undefined) {
 		return true;
 	}
 
-	return config.store.showOnlyBrands.includes(brand);
+	return config.merchandise?.brands?.includes(brand) ?? false;
 }
 
 /**
@@ -20,32 +20,26 @@ function filterBrand(brand: Link['brand']): boolean {
  * @param model The model of the GPU
  * @param series The series of the GPU
  */
-function filterModel(model: Link['model'], series: Link['series']): boolean {
-	if (config.store.showOnlyModels.length === 0) {
+function filterModel(model: Model, series: Series): boolean {
+	if (config.merchandise?.models === undefined) {
 		return true;
 	}
 
-	const sanitizedModel = model.replace(/\s/g, '');
-	const sanitizedSeries = series.replace(/\s/g, '');
-	for (const configModelEntry of config.store.showOnlyModels) {
-		const sanitizedConfigModel = configModelEntry.name.replace(/\s/g, '');
-		const sanitizedConfigSeries = configModelEntry.series.replace(
-			/\s/g,
-			''
-		);
-		if (sanitizedConfigSeries) {
-			if (
-				sanitizedSeries === sanitizedConfigSeries &&
-				sanitizedModel === sanitizedConfigModel
-			) {
-				return true;
+	const models =
+		config.merchandise.models.filter((m) => {
+			if (m.series) {
+				return (
+					m.name === model &&
+					m.series.some((s) => {
+						const one = s.name;
+						return one === series;
+					})
+				);
 			}
-		} else if (sanitizedModel === sanitizedConfigModel) {
-			return true;
-		}
-	}
 
-	return false;
+			return m.name === model;
+		}) ?? [];
+	return models.length > 0;
 }
 
 /**
@@ -53,12 +47,12 @@ function filterModel(model: Link['model'], series: Link['series']): boolean {
  *
  * @param series The series of the GPU
  */
-export function filterSeries(series: Link['series']): boolean {
-	if (config.store.showOnlySeries.length === 0) {
+export function filterSeries(series: Series): boolean {
+	if (config.merchandise?.series === undefined) {
 		return true;
 	}
 
-	return config.store.showOnlySeries.includes(series);
+	return config.merchandise.series.some((s) => s.name === series) ?? false;
 }
 
 /**
