@@ -1,5 +1,5 @@
-import {Browser, Page} from 'puppeteer';
 import {StatusCodeRangeArray, Store} from './store/model';
+import {Page} from 'puppeteer';
 import {configs} from './config';
 import {disableBlockerInPage} from './adblocker';
 import {getRandom} from 'random-useragent';
@@ -48,11 +48,11 @@ export async function closePage(page: Page) {
 	await page.close();
 }
 
-export async function getRandomUserAgent(browser: Browser): Promise<string> {
+export async function getRandomUserAgent(): Promise<string> {
 	const userAgent =
 		getRandom((ua) => {
 			return ua.browserName === 'Chrome' && ua.browserVersion > '20';
-		}) ?? (await browser.userAgent());
+		}) ?? '';
 
 	logger.debug('user agent', userAgent);
 

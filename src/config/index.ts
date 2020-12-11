@@ -1,7 +1,6 @@
-import {readFileSync, readdirSync} from 'fs';
+import {existsSync, readFileSync, readdirSync} from 'fs';
 import {config as config_} from 'dotenv';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import merge from 'lodash/merge';
+import merge from 'lodash/merge'; // eslint-disable-line import/no-extraneous-dependencies
 import path from 'path';
 import {printBanner} from '../banner';
 import yaml from 'yaml';
@@ -72,7 +71,6 @@ interface IConfig {
 		};
 		screenshot: boolean;
 		trusted?: boolean;
-		userAgents?: string[];
 	};
 	docker?: boolean;
 	stores?: IStore[];
@@ -371,10 +369,11 @@ const browser = {
 		process.env.PAGE_SLEEP_MAX,
 		5000
 	),
-	open: envOrBoolean(process.env.OPEN_BROWSER)
+	open: envOrBoolean(process.env.OPEN_BROWSER),
+	userAgent: ''
 };
 
-const docker = envOrBoolean(process.env.DOCKER);
+const docker = envOrBoolean(process.env.DOCKER, false);
 
 const logLevel = envOrString(process.env.LOG_LEVEL, 'info');
 
