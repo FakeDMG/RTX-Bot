@@ -22,7 +22,10 @@ export function sendSlackMessage(link: Link, store: Store) {
 						promises.push(
 							web.chat.postMessage({
 								channel,
-								text: `${Print.inStock(link, store)}\n${givenUrl}`
+								text: `${Print.inStock(
+									link,
+									store
+								)}\n${givenUrl}`
 							})
 						);
 					}
@@ -33,7 +36,10 @@ export function sendSlackMessage(link: Link, store: Store) {
 						if (result.ok) {
 							logger.info('✔ slack message sent');
 						} else {
-							logger.error("✖ couldn't send slack message", result);
+							logger.error(
+								"✖ couldn't send slack message",
+								result
+							);
 						}
 					});
 				} catch (error: unknown) {

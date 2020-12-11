@@ -34,14 +34,20 @@ export function sendTwitchMessage(link: Link, store: Store) {
 						tokenData.expiryTimestamp === null
 							? null
 							: new Date(tokenData.expiryTimestamp),
-					onRefresh: async ({accessToken, refreshToken, expiryDate}) => {
+					onRefresh: async ({
+						accessToken,
+						refreshToken,
+						expiryDate
+					}) => {
 						return promises.writeFile(
 							'./twitch.json',
 							JSON.stringify(
 								{
 									accessToken,
 									expiryTimestamp:
-										expiryDate === null ? null : expiryDate.getTime(),
+										expiryDate === null
+											? null
+											: expiryDate.getTime(),
 									refreshToken
 								},
 								null,
@@ -59,7 +65,10 @@ export function sendTwitchMessage(link: Link, store: Store) {
 		);
 
 		chatClient.onJoin((channel: string, user: string) => {
-			if (channel === `#${twitch.channel}` && user === chatClient.currentNick) {
+			if (
+				channel === `#${twitch.channel}` &&
+				user === chatClient.currentNick
+			) {
 				while (messages.length) {
 					const message: string | undefined = messages.shift();
 
@@ -68,7 +77,10 @@ export function sendTwitchMessage(link: Link, store: Store) {
 							chatClient.say(channel, message);
 							logger.info('✔ twitch message sent');
 						} catch (error: unknown) {
-							logger.error("✖ couldn't send twitch message", error);
+							logger.error(
+								"✖ couldn't send twitch message",
+								error
+							);
 						}
 					}
 				}
@@ -84,7 +96,9 @@ export function sendTwitchMessage(link: Link, store: Store) {
 		logger.debug('↗ sending twitch message');
 
 		messages.push(
-			`${Print.inStock(link, store)}\n${link.cartUrl ? link.cartUrl : link.url}`
+			`${Print.inStock(link, store)}\n${
+				link.cartUrl ? link.cartUrl : link.url
+			}`
 		);
 
 		if (!alreadySaying) {

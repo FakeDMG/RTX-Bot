@@ -123,12 +123,17 @@ interface IConfig {
 			apiKey: string;
 		};
 		pushover?: {
-			token: string;
-			username: string;
+			expire: number;
 			priority: number;
+			retry: number;
+			username: string;
+			token: string;
 		};
 		slack?: ISlack[];
-		sound?: string;
+		sound?: {
+			filename: string;
+			player?: string;
+		};
 		telegram?: {
 			token: string;
 			chatIds: string[];
@@ -188,7 +193,7 @@ function configFactory(): IConfig {
 
 	let config: IConfig = defaultConfig;
 
-	files.forEach(function (file: string) {
+	files.forEach((file: string) => {
 		if (file.includes('yaml')) {
 			config = merge(
 				config,
@@ -411,6 +416,7 @@ const store = {
 			3070: envOrNumber(process.env.MAX_PRICE_SERIES_3070),
 			3080: envOrNumber(process.env.MAX_PRICE_SERIES_3080),
 			3090: envOrNumber(process.env.MAX_PRICE_SERIES_3090),
+			darkhero: envOrNumber(process.env.MAX_PRICE_SERIES_DARKHERO),
 			rx6800: envOrNumber(process.env.MAX_PRICE_SERIES_RX6800),
 			rx6800xt: envOrNumber(process.env.MAX_PRICE_SERIES_RX6800XT),
 			rx6900xt: envOrNumber(process.env.MAX_PRICE_SERIES_RX6900XT),

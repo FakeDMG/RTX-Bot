@@ -37,6 +37,7 @@ import {Coolmod} from './coolmod';
 import {Corsair} from './corsair';
 import {Currys} from './currys';
 import {Cyberport} from './cyberport';
+import {EbGames} from './ebgames';
 import {Ebuyer} from './ebuyer';
 import {Elcorteingles} from './elcorteingles';
 import {Eprice} from './eprice';
@@ -52,6 +53,7 @@ import {GamestopDE} from './gamestop-de';
 import {Kabum} from './kabum';
 import {Mediamarkt} from './mediamarkt';
 import {Medimax} from './medimax';
+import {Megekko} from './megekko';
 import {MemoryExpress} from './memoryexpress';
 import {MicroCenter} from './microcenter';
 import {Mindfactory} from './mindfactory';
@@ -75,10 +77,12 @@ import {Spielegrotte} from './spielegrotte';
 import {Store} from './store';
 import {Target} from './target';
 import {TopAchat} from './topachat';
+import {ToysRUs} from './toysrus';
 import {Unieuro} from './unieuro';
 import {Very} from './very';
 import {VsGamers} from './vsgamers';
 import {Walmart} from './walmart';
+import {WalmartCa} from './walmart-ca';
 import {Wipoid} from './wipoid';
 import {Xbox} from './xbox';
 import {Zotac} from './zotac';
@@ -123,6 +127,7 @@ export const storeList = new Map([
 	[Corsair.name, Corsair],
 	[Currys.name, Currys],
 	[Cyberport.name, Cyberport],
+	[EbGames.name, EbGames],
 	[Ebuyer.name, Ebuyer],
 	[Elcorteingles.name, Elcorteingles],
 	[Eprice.name, Eprice],
@@ -138,6 +143,7 @@ export const storeList = new Map([
 	[Kabum.name, Kabum],
 	[Mediamarkt.name, Mediamarkt],
 	[Medimax.name, Medimax],
+	[Megekko.name, Megekko],
 	[MemoryExpress.name, MemoryExpress],
 	[MicroCenter.name, MicroCenter],
 	[Mindfactory.name, Mindfactory],
@@ -160,10 +166,12 @@ export const storeList = new Map([
 	[Spielegrotte.name, Spielegrotte],
 	[Target.name, Target],
 	[TopAchat.name, TopAchat],
+	[ToysRUs.name, ToysRUs],
 	[Unieuro.name, Unieuro],
 	[Very.name, Very],
 	[VsGamers.name, VsGamers],
 	[Walmart.name, Walmart],
+	[WalmartCa.name, WalmartCa],
 	[Wipoid.name, Wipoid],
 	[Xbox.name, Xbox],
 	[Zotac.name, Zotac]
@@ -206,7 +214,9 @@ function printConfig() {
 	}
 
 	if (config.store.showOnlyBrands.length > 0) {
-		logger.info(`ℹ selected brands: ${config.store.showOnlyBrands.join(', ')}`);
+		logger.info(
+			`ℹ selected brands: ${config.store.showOnlyBrands.join(', ')}`
+		);
 	}
 
 	if (config.store.showOnlyModels.length > 0) {
@@ -222,7 +232,9 @@ function printConfig() {
 	}
 
 	if (config.store.showOnlySeries.length > 0) {
-		logger.info(`ℹ selected series: ${config.store.showOnlySeries.join(', ')}`);
+		logger.info(
+			`ℹ selected series: ${config.store.showOnlySeries.join(', ')}`
+		);
 	}
 }
 

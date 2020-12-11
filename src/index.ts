@@ -1,5 +1,5 @@
-import {Browser} from 'puppeteer';
-import {configs} from './config';
+import {configs} from './config'; // Needs to be loaded first
+import {Browser} from 'puppeteer'; // eslint-disable-line sort-imports
 import {getSleepTime} from './util';
 import {logger} from './logger';
 import puppeteer from 'puppeteer-extra';

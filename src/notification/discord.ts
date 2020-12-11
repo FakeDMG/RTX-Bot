@@ -56,7 +56,9 @@ export function sendDiscordMessage(link: Link, store: Store) {
 					});
 				}
 
-				(await Promise.all(promises)).forEach(({client}) => client.destroy());
+				(await Promise.all(promises)).forEach(({client}) =>
+					client.destroy()
+				);
 
 				logger.info('✔ discord message sent');
 			} catch (error: unknown) {

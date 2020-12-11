@@ -1,11 +1,15 @@
+import {Browser, Page} from 'puppeteer';
 import {StatusCodeRangeArray, Store} from './store/model';
-import {Page} from 'puppeteer';
 import {configs} from './config';
 import {disableBlockerInPage} from './adblocker';
+import {getRandom} from 'random-useragent';
+import {logger} from './logger';
 
 export function getSleepTime(store: Store) {
 	const minSleep = store.minPageSleep as number;
-	return minSleep + Math.random() * ((store.maxPageSleep as number) - minSleep);
+	return (
+		minSleep + Math.random() * ((store.maxPageSleep as number) - minSleep)
+	);
 }
 
 export async function delay(ms: number) {
@@ -44,12 +48,13 @@ export async function closePage(page: Page) {
 	await page.close();
 }
 
-export function getRandomUserAgent(): string {
-	if (configs.browser.userAgents) {
-		return configs.browser.userAgents[
-			Math.floor(Math.random() * configs.browser.userAgents.length)
-		];
-	}
+export async function getRandomUserAgent(browser: Browser): Promise<string> {
+	const userAgent =
+		getRandom((ua) => {
+			return ua.browserName === 'Chrome' && ua.browserVersion > '20';
+		}) ?? (await browser.userAgent());
 
-	return '';
+	logger.debug('user agent', userAgent);
+
+	return userAgent;
 }

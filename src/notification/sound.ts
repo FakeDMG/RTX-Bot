@@ -8,7 +8,9 @@ const sound = configs.notification?.sound;
 
 export function playSound() {
 	if (sound) {
-		player = playerLib();
+		player = sound.player
+			? playerLib({players: [sound.player]})
+			: playerLib();
 
 		if (player.player === null) {
 			logger.warn("✖ couldn't find sound player");
@@ -20,13 +22,13 @@ export function playSound() {
 
 		logger.debug('↗ playing sound');
 
-		fs.access(sound, fs.constants.F_OK, (error) => {
+		fs.access(sound.filename, fs.constants.F_OK, (error) => {
 			if (error) {
 				logger.error(`✖ error opening sound file: ${error.message}`);
 				return;
 			}
 
-			player.play(sound, (error: Error) => {
+			player.play(sound.filename, (error: Error) => {
 				if (error) {
 					logger.error("✖ couldn't play sound", error);
 				}
