@@ -18,6 +18,10 @@ export async function delay(ms: number) {
 	});
 }
 
+export function noop() {
+	// Do nothing
+}
+
 export function isStatusCodeInRange(
 	statusCode: number,
 	range: StatusCodeRangeArray

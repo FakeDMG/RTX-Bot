@@ -1,4 +1,11 @@
-import {Browser, Page, PageEventObj, Request, Response} from 'puppeteer';
+import {
+	Browser,
+	Page,
+	PageEventObj,
+	Request,
+	RespondOptions,
+	Response
+} from 'puppeteer';
 import {Link, Store, getStores} from './model';
 import {Print, logger} from '../logger';
 import {Selector, getPrice, pageIncludesLabels} from './includes-labels';
@@ -7,7 +14,8 @@ import {
 	delay,
 	getRandomUserAgent,
 	getSleepTime,
-	isStatusCodeInRange
+	isStatusCodeInRange,
+	noop
 } from '../util';
 import {disableBlockerInPage, enableBlockerInPage} from '../adblocker';
 import {config} from '../config';
@@ -15,7 +23,7 @@ import {filterStoreLink} from './filter';
 import open from 'open';
 import {processBackoffDelay} from './model/helpers/backoff';
 import {sendNotification} from '../notification';
-import useProxy from 'puppeteer-page-proxy';
+import useProxy from '@doridian/puppeteer-page-proxy';
 
 const inStock: Record<string, boolean> = {};
 
@@ -65,7 +73,7 @@ async function handleProxy(request: Request, proxy?: string) {
 	try {
 		await useProxy(request, proxy);
 	} catch (error: unknown) {
-		logger.error(error);
+		logger.error('handleProxy', error);
 		try {
 			await request.abort();
 		} catch {}
@@ -92,6 +100,14 @@ async function handleAdBlock(request: Request, adBlockRequestHandler: any) {
 			resolve(true);
 		};
 
+		const respondFunc = async (response: RespondOptions) => {
+			try {
+				await request.respond(response);
+			} catch {}
+
+			resolve(true);
+		};
+
 		const requestProxy = new Proxy(request, {
 			get(target, prop, receiver) {
 				if (prop === 'continue') {
@@ -102,9 +118,14 @@ async function handleAdBlock(request: Request, adBlockRequestHandler: any) {
 					return abortFunc;
 				}
 
+				if (prop === 'respond') {
+					return respondFunc;
+				}
+
 				return Reflect.get(target, prop, receiver);
 			}
 		});
+
 		adBlockRequestHandler(requestProxy);
 	});
 }
@@ -166,6 +187,11 @@ async function lookup(browser: Browser, store: Store) {
 						return onProxyFunc;
 					}
 
+					// Give dummy setRequestInterception to avoid AdBlock from messing with it
+					if (prop === 'setRequestInterception') {
+						return noop;
+					}
+
 					return Reflect.get(target, prop, receiver);
 				}
 			});
@@ -203,7 +229,6 @@ async function lookup(browser: Browser, store: Store) {
 			);
 			const client = await page.target().createCDPSession();
 			await client.send('Network.clearBrowserCookies');
-			// Await client.send('Network.clearBrowserCache');
 		}
 
 		if (pageProxy) {
@@ -314,6 +339,15 @@ async function lookupCardInStock(store: Store, page: Page, link: Link) {
 		}
 	}
 
+	if (store.labels.outOfStock) {
+		if (
+			await pageIncludesLabels(page, store.labels.outOfStock, baseOptions)
+		) {
+			logger.info(Print.outOfStock(link, store, true));
+			return false;
+		}
+	}
+
 	if (store.labels.maxPrice) {
 		const maxPrice =
 			config.merchandise?.series?.find((s) => s.name === link.series)
@@ -335,15 +369,6 @@ async function lookupCardInStock(store: Store, page: Page, link: Link) {
 	// ) {
 	// 	return store.realTimeInventoryLookup(link.itemNumber);
 	// }
-
-	if (store.labels.outOfStock) {
-		if (
-			await pageIncludesLabels(page, store.labels.outOfStock, baseOptions)
-		) {
-			logger.info(Print.outOfStock(link, store, true));
-			return false;
-		}
-	}
 
 	if (store.labels.inStock) {
 		const options = {
